@@ -16,6 +16,7 @@
 		0EDBF5776E0688B6FDC07F146A197E27 /* IntakeSpeechBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3CE180CE74C6C11F1B58AEB53F2593 /* IntakeSpeechBubbleView.swift */; };
 		101A02C9E2507574C9C3C458F04F73B0 /* DummyDustInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE0671DD8371627430E075564C0E7979 /* DummyDustInfoService.swift */; };
 		10AF5D542F038681BFDC164CC8B92BB4 /* DustAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316E5DE8848987892E5779EC1B97A135 /* DustAPIService.swift */; };
+		19DD6D6222E8B398005F0F55 /* HealthKitProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19DD6D6122E8B398005F0F55 /* HealthKitProvider.swift */; };
 		1B17056B0A8890610CA8F86D26F55DAD /* TestNSObject+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C97DEAF96336B82C7C589DE239BFD7 /* TestNSObject+.swift */; };
 		1D29C0DD2498D7286567F9F71FE398EB /* DustDataTerm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6389B158B39B1A3AA98C03E334185086 /* DustDataTerm.swift */; };
 		1D3B268EAA047941610A7A9C51B78C26 /* TestRatioPieGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 771A6EB50A2D651B9AEE270F6542C576 /* TestRatioPieGraphView.swift */; };
@@ -55,7 +56,7 @@
 		519B7F0016C2C381A823F4E7629D0A85 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E26FB8E681522D59A6D20304C6C35C8 /* HealthKit.framework */; };
 		52A157163AAF09241CA42C95E8573798 /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D843CA8FAB1C219473C983BD26946C00 /* UIView+.swift */; };
 		537FA90D61BE9D04C8FCF63950DCE428 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E3C26ACD7F41B2C40E028496913E9C /* HealthKitService.swift */; };
-		54095FFAC010BAF114148B750CFA4B5B /* GeocodeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF494D0AB43BDE719D522E93D5FB073F /* GeocodeManager.swift */; };
+		54095FFAC010BAF114148B750CFA4B5B /* GeocodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF494D0AB43BDE719D522E93D5FB073F /* GeocodeService.swift */; };
 		54C189CDAC02D1A5A5F542C65DC100EF /* GeoConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5344DF65472E8B15445A7E4D8BBB1A /* GeoConverter.swift */; };
 		55C97458A7D103F88156CA664B27D6C9 /* RatioGraphViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACADE03E303DFD70F1FE5837C0FBEE19 /* RatioGraphViewDataSource.swift */; };
 		56BF4E6D6AFAB5570866F173C2E45AFA /* SharedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81BEEAC1BBD31F0734B18B81183373E2 /* SharedInfo.swift */; };
@@ -75,7 +76,6 @@
 		6BA2974BDDA4BEBF0C6A52281A51EC7B /* TestNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54623E292883E938E0F37B68511E18E4 /* TestNetworkManager.swift */; };
 		6BCC96BC6A8DC30F1EE2431867B7B21E /* FeedbackDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB9E624C0570896690FC0F53E6BE01A /* FeedbackDetailViewModel.swift */; };
 		6C02BFB6920B35B93E26012BD367A2C2 /* IntakeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E51A7E3839572266F6CF77FA8359F3ED /* IntakeData.swift */; };
-		7096BAA2D45BB86B62A71F024FD1D7FF /* Notification+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF549B46A1C3646A2A87475B81265A0 /* Notification+.swift */; };
 		70B65A75E945FDC3C0476AC6B6ED64BD /* TestFDCountingLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A281CCCB8F8752DEA8C57CF99BFD03F /* TestFDCountingLabel.swift */; };
 		71A3418C5387A0F14C9743BCCCB43BBC /* TestFeedbackListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F983596EF0FD18034F3E35108C70ECC /* TestFeedbackListService.swift */; };
 		71B3C1ADA79DE5D94F4B71099A7F93E7 /* XMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916DF34E34503F06CCB66315BFC709C8 /* XMLParser.swift */; };
@@ -129,7 +129,7 @@
 		CE0DCB1F15FEFE05B3DC6E0D4AFE6ACB /* TestHTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF37AC562DA142BD0BAF691A7F4D3E72 /* TestHTTPError.swift */; };
 		CE56275E97C36364D7C237B6F48F9EBC /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF58A4F8686A33A482CCFCC3A0C4C7 /* MainViewModel.swift */; };
 		CE8534527C906601AE29361074B6723B /* TestDustManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1BA0F78A7CE3C7FF664CFD9D7EA5E1 /* TestDustManager.swift */; };
-		D0020D2633D0C6BDFBBFC429C048E0E3 /* GeocodeManagerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C8EED7E3C3612624D6ADB9C6A68FA9 /* GeocodeManagerType.swift */; };
+		D0020D2633D0C6BDFBBFC429C048E0E3 /* GeocodeServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6C8EED7E3C3612624D6ADB9C6A68FA9 /* GeocodeServiceType.swift */; };
 		D11502BF018BDE2B921882A9FF0CA2DD /* NSObject+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5976FE69AFC67BD4BEC1DC74F88DC23A /* NSObject+.swift */; };
 		D1456C75F1ADE8C72EAF619A85DBA813 /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19FD3A67CBDAABFF63CC572A23F34E5D /* Home.storyboard */; };
 		D266A0E2725337BABF52594D5099A298 /* MockNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D976382D79F423DA692A7725F5CF5432 /* MockNetworkManager.swift */; };
@@ -189,6 +189,7 @@
 		1644E56E811886FA59628BFFAB345E0C /* MockCoreDataIntakeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockCoreDataIntakeManager.swift; sourceTree = "<group>"; };
 		176363D9BEB95918DFB49129C0F81496 /* IntakeSpeechBubbleView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IntakeSpeechBubbleView.xib; sourceTree = "<group>"; };
 		18B4A1033C1BE99C001CA2C98E63E304 /* FeedbackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackViewController.swift; sourceTree = "<group>"; };
+		19DD6D6122E8B398005F0F55 /* HealthKitProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitProvider.swift; sourceTree = "<group>"; };
 		1A707540F2E0D6DB3EA4C411A8DA5339 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Feedback.storyboard; sourceTree = "<group>"; };
 		1B3DCEF598B9ECBC54ECCFB3EF1E0CAB /* DustAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DustAPI.swift; sourceTree = "<group>"; };
 		1BA0A52F0ED2A919EC586D53EA6365F7 /* UnitTestREADME.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = UnitTestREADME.md; sourceTree = "<group>"; };
@@ -303,20 +304,19 @@
 		BC873B6535665900ED21905CC761A0E3 /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		BDFA38F26AE8DA530AD706C26663B684 /* TestDate+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestDate+.swift"; sourceTree = "<group>"; };
 		BE1160BB30C4F58F602024134D352005 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/Info.plist; sourceTree = "<group>"; };
-		BF494D0AB43BDE719D522E93D5FB073F /* GeocodeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeocodeManager.swift; sourceTree = "<group>"; };
+		BF494D0AB43BDE719D522E93D5FB073F /* GeocodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeocodeService.swift; sourceTree = "<group>"; };
 		C030BF13A08592DA68194155A6301DB1 /* MockCoreDataUserManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockCoreDataUserManager.swift; sourceTree = "<group>"; };
 		C38150758DA3DCA23FEC50E99500C519 /* RatioGraphView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RatioGraphView.xib; sourceTree = "<group>"; };
 		C50389C80E73BBD8FFA4331D7EC43144 /* MockJSONManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockJSONManager.swift; sourceTree = "<group>"; };
 		C5C1E21F53D7194A77E5F5AEA3256903 /* RatioStickGraphView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RatioStickGraphView.xib; sourceTree = "<group>"; };
 		C7D460B60801C8BE30B4FE3D12D78176 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Home.storyboard; sourceTree = "<group>"; };
-		CAF549B46A1C3646A2A87475B81265A0 /* Notification+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+.swift"; sourceTree = "<group>"; };
 		CC3D10262DF1641D3E3C56E6B707FAD0 /* Pods_FineDustTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FineDustTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFB9E624C0570896690FC0F53E6BE01A /* FeedbackDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackDetailViewModel.swift; sourceTree = "<group>"; };
 		D204B44F8946BAEB91C237551E851C45 /* Notification.Name+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Notification.Name+.swift"; sourceTree = "<group>"; };
 		D275FC2070268FAA9561BB9FAF6291A1 /* RatioStickGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatioStickGraphView.swift; sourceTree = "<group>"; };
 		D31D49E1B8644C94A87A5548E4B3850D /* MockIntakeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockIntakeService.swift; sourceTree = "<group>"; };
 		D6435ACF82F05C86B87064C4A425057A /* FloatingPoint+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FloatingPoint+.swift"; sourceTree = "<group>"; };
-		D6C8EED7E3C3612624D6ADB9C6A68FA9 /* GeocodeManagerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeocodeManagerType.swift; sourceTree = "<group>"; };
+		D6C8EED7E3C3612624D6ADB9C6A68FA9 /* GeocodeServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeocodeServiceType.swift; sourceTree = "<group>"; };
 		D7B2EF4E7A489C54FEE33EE4409FC10F /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		D843CA8FAB1C219473C983BD26946C00 /* UIView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
 		D976382D79F423DA692A7725F5CF5432 /* MockNetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockNetworkManager.swift; sourceTree = "<group>"; };
@@ -382,6 +382,7 @@
 				93BEE9398AD8C89DE428EF8557E6A90B /* HealthKitManagerType.swift */,
 				06E3C26ACD7F41B2C40E028496913E9C /* HealthKitService.swift */,
 				5102CC41F567E949B07A10C27E6797F3 /* HealthKitServiceType.swift */,
+				19DD6D6122E8B398005F0F55 /* HealthKitProvider.swift */,
 			);
 			path = HealthKit;
 			sourceTree = "<group>";
@@ -446,26 +447,6 @@
 			path = Dummy;
 			sourceTree = "<group>";
 		};
-		6288C47A7CE511CBC336C99EA9853F0F /* Realm */ = {
-			isa = PBXGroup;
-			children = (
-				A8651F7D66704DD0EFF109BBB240977E /* IntakeModel.swift */,
-				6DBC99DF57EDD8EA31DD58EFB8434C65 /* UserModel.swift */,
-			);
-			path = Realm;
-			sourceTree = "<group>";
-		};
-		678782F28FAA1B00AA6573DCEEB9E167 /* Response */ = {
-			isa = PBXGroup;
-			children = (
-				318EE6C1F6EC7BDB484E4719161FE66A /* DustAPIInfoResponse.swift */,
-				315AB9479FD4728F3B7185CFBFD464FE /* DustAPIObservatoryResponse.swift */,
-				13755ECB2970B55BFBCFD923CE922F9D /* DustAPIResponseMetadata.swift */,
-				9B263A38D0219036D99D3A471387549A /* DustAPIResponseType.swift */,
-			);
-			path = Response;
-			sourceTree = "<group>";
-		};
 		1AD442205551B1E4A9681E5D2C19846B /* Supports */ = {
 			isa = PBXGroup;
 			children = (
@@ -490,7 +471,6 @@
 				D6435ACF82F05C86B87064C4A425057A /* FloatingPoint+.swift */,
 				3C15C0748C03F73EAD6344B72C300C9D /* Locale+.swift */,
 				5976FE69AFC67BD4BEC1DC74F88DC23A /* NSObject+.swift */,
-				CAF549B46A1C3646A2A87475B81265A0 /* Notification+.swift */,
 				D204B44F8946BAEB91C237551E851C45 /* Notification.Name+.swift */,
 				8A37FD10771CEEAD7E013A24A38A313F /* String+.swift */,
 				5044DCFD2D334FA7263E4FBE7C816881 /* UIAlertController+.swift */,
@@ -622,6 +602,15 @@
 			path = ViewControllers;
 			sourceTree = "<group>";
 		};
+		6288C47A7CE511CBC336C99EA9853F0F /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				A8651F7D66704DD0EFF109BBB240977E /* IntakeModel.swift */,
+				6DBC99DF57EDD8EA31DD58EFB8434C65 /* UserModel.swift */,
+			);
+			path = Realm;
+			sourceTree = "<group>";
+		};
 		62B4CDEF4663F22FBF40723136CC9729 /* Parser */ = {
 			isa = PBXGroup;
 			children = (
@@ -629,6 +618,17 @@
 				6711652B3EFAC8972523E0654E3DC3AC /* XMLParserType.swift */,
 			);
 			path = Parser;
+			sourceTree = "<group>";
+		};
+		678782F28FAA1B00AA6573DCEEB9E167 /* Response */ = {
+			isa = PBXGroup;
+			children = (
+				318EE6C1F6EC7BDB484E4719161FE66A /* DustAPIInfoResponse.swift */,
+				315AB9479FD4728F3B7185CFBFD464FE /* DustAPIObservatoryResponse.swift */,
+				13755ECB2970B55BFBCFD923CE922F9D /* DustAPIResponseMetadata.swift */,
+				9B263A38D0219036D99D3A471387549A /* DustAPIResponseType.swift */,
+			);
+			path = Response;
 			sourceTree = "<group>";
 		};
 		6D0532BEC21D7E183C959E879AC73035 /* ViewModels */ = {
@@ -715,8 +715,8 @@
 		A6B908F0A804537BD7803F36EC3811DE /* Location */ = {
 			isa = PBXGroup;
 			children = (
-				BF494D0AB43BDE719D522E93D5FB073F /* GeocodeManager.swift */,
-				D6C8EED7E3C3612624D6ADB9C6A68FA9 /* GeocodeManagerType.swift */,
+				BF494D0AB43BDE719D522E93D5FB073F /* GeocodeService.swift */,
+				D6C8EED7E3C3612624D6ADB9C6A68FA9 /* GeocodeServiceType.swift */,
 				68E27CBD57B722D6F6C1AE0D64A1D4C5 /* LocationManager.swift */,
 				1BEF7A1287167E2115A436F395304227 /* LocationManagerType.swift */,
 			);
@@ -972,6 +972,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				39247054A92E25F2499BE380A5AE6B82 /* AppDelegate.swift in Sources */,
+				19DD6D6222E8B398005F0F55 /* HealthKitProvider.swift in Sources */,
 				3A0A060A04F67ED77921BE09D8BFCBD9 /* Assets.swift in Sources */,
 				A77C3991F61E8CBB1EB40A486B303E58 /* Banner.swift in Sources */,
 				BDBE1141246065E4CD68ECA4C693C518 /* CALayer+.swift in Sources */,
@@ -1003,8 +1004,8 @@
 				F3857A21E45C53DB127741FDE5AC28F2 /* FeedbackViewModel.swift in Sources */,
 				E1F24F88DA1B9934D72BA5C142C5F384 /* FloatingPoint+.swift in Sources */,
 				54C189CDAC02D1A5A5F542C65DC100EF /* GeoConverter.swift in Sources */,
-				54095FFAC010BAF114148B750CFA4B5B /* GeocodeManager.swift in Sources */,
-				D0020D2633D0C6BDFBBFC429C048E0E3 /* GeocodeManagerType.swift in Sources */,
+				54095FFAC010BAF114148B750CFA4B5B /* GeocodeService.swift in Sources */,
+				D0020D2633D0C6BDFBBFC429C048E0E3 /* GeocodeServiceType.swift in Sources */,
 				5001A870754216162BAAEF6702256CFE /* GraphDrawable.swift in Sources */,
 				1F4BF50C88CEC97AC02705478E41E74C /* HealthKitAuthorizationObserver.swift in Sources */,
 				A36615F0BB7BAB9ABC3FBEAF3A1E5E2E /* HealthKitError.swift in Sources */,
@@ -1030,7 +1031,6 @@
 				F70805BC0EC6E13A3B7D229A5CA117D3 /* Log.swift in Sources */,
 				CE56275E97C36364D7C237B6F48F9EBC /* MainViewModel.swift in Sources */,
 				D11502BF018BDE2B921882A9FF0CA2DD /* NSObject+.swift in Sources */,
-				7096BAA2D45BB86B62A71F024FD1D7FF /* Notification+.swift in Sources */,
 				8E8286AB2B118F70D14B9907463A590C /* Notification.Name+.swift in Sources */,
 				4DF2C48B18B20BDC1056BF7A02847916 /* PersistenceService.swift in Sources */,
 				A3D5707F04BB2E8146CA36BD24D7F028 /* PersistenceServiceType.swift in Sources */,

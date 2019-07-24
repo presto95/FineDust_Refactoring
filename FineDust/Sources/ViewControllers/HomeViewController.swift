@@ -42,9 +42,9 @@ final class HomeViewController: UIViewController {
   /// 미세먼지 애니메이션을 움직이게 할 타이머.
   private var timer: Timer?
   
-  private let coreDataService = CoreDataService()
-  private let healthKitService = HealthKitService(healthKit: HealthKitManager())
-  private let dustInfoService = DustInfoService(dustManager: DustInfoManager())
+  private let persistenceService = PersistenceService()
+  private let healthKitService = HealthKitService()
+  private let dustAPIService = DustAPIService()
   private let intakeService = IntakeService()
   
   /// 오전(후) 시 : 분 으로 나타내주는 프로퍼티.

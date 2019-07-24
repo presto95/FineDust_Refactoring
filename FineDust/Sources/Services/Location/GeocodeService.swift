@@ -10,7 +10,7 @@ import CoreLocation
 
 import RxSwift
 
-final class GeocodeManager: GeocodeManagerType {
+final class GeocodeService: GeocodeServiceType {
   
   func geocode(for location: CLLocation) -> Observable<String> {
     return .create { observer in

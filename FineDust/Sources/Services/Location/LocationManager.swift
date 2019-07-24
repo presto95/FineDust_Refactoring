@@ -16,20 +16,20 @@ final class LocationManager: NSObject {
   
   private let disposeBag = DisposeBag()
   
-  private let geocodeManager: GeocodeManagerType
+  private let geocodeService: GeocodeServiceType
   
-  private let dustObservatoryManager: DustObservatoryManagerType
+  private let dustAPIService: DustAPIServiceType
   
   private let locationManager = CLLocationManager().then {
     $0.desiredAccuracy = kCLLocationAccuracyBest
     $0.distanceFilter = kCLDistanceFilterNone
   }
   
-  init(geocodeManager: GeocodeManagerType = GeocodeManager(),
-       dustObservatoryManager: DustObservatoryManagerType = DustObservatoryManager()) {
+  init(geocodeService: GeocodeServiceType = GeocodeService(),
+       dustAPIService: DustAPIServiceType = DustAPIService()) {
     super.init()
-    self.geocodeManager = geocodeManager
-    self.dustObservatoryManager = dustObservatoryManager
+    self.geocodeService = geocodeService
+    self.dustAPIService = dustAPIService
     
     locationManager.rx.didChangeAuthorization
       .map { $0.status }
@@ -82,11 +82,11 @@ extension LocationManager: LocationManagerType {
       SharedInfo.shared.x = convertedCoordinate?.x ?? 0
       SharedInfo.shared.y = convertedCoordinate?.y ?? 0
       
-      self.geocodeManager.geocode(for: location)
+      self.geocodeService.geocode(for: location)
         .subscribe(
           onNext: { address in
             SharedInfo.shared.address = address
-            self.dustObservatoryManager.requestObservatory()
+            self.dustAPIService.requestObservatory()
               .subscribe(
                 onNext: { response in
                   guard let observatory = response.observatory else { return }
@@ -95,22 +95,18 @@ extension LocationManager: LocationManagerType {
                     .post(name: .didSuccessUpdatingAllLocationTasks, object: nil)
               },
                 onError: { error in
-                  if let error = error as? DustAPIError {
-                    NotificationCenter.default
-                      .post(name: .didFailUpdatingAllLocationTasks,
-                            object: nil,
-                            userInfo: ["error": LocationTaskError.networkingError(error)])
-                  }
+                  NotificationCenter.default
+                    .post(name: .didFailUpdatingAllLocationTasks,
+                          object: nil,
+                          userInfo: ["error": error])
               })
               .disposed(by: self.disposeBag)
         },
           onError: { error in
-            if let error = error as? CLError {
-              NotificationCenter.default
-                .post(name: .didFailUpdatingAllLocationTasks,
-                      object: nil,
-                      userInfo: ["error": LocationTaskError.geocodingError(error)])
-            }
+            NotificationCenter.default
+              .post(name: .didFailUpdatingAllLocationTasks,
+                    object: nil,
+                    userInfo: ["error": error])
         })
         .disposed(by: self.disposeBag)
     }
@@ -118,12 +114,10 @@ extension LocationManager: LocationManagerType {
   
   var errorHandler: ((Error) -> Void)? {
     return { error in
-      if let error = error as? CLError {
-        NotificationCenter.default
-          .post(name: .didFailUpdatingAllLocationTasks,
-                object: nil,
-                userInfo: ["error": LocationTaskError.coreLocationError(error)])
-      }
+      NotificationCenter.default
+        .post(name: .didFailUpdatingAllLocationTasks,
+              object: nil,
+              userInfo: ["error": error])
     }
   }
   

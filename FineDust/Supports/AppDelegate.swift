@@ -42,6 +42,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
       persistenceService.saveLastAccessedDate(.init())
     }
     healthKitManager.requestAuthorization()
+    
     locationManager.requestAuthorization()
     
     return true

@@ -64,16 +64,16 @@ private extension FeedbackViewController {
              message: "정렬 방법을 선택해 주세요.",
              style: .actionSheet)
       .action(title: "최신순") { [weak self] _, _ in
-        self?.newDustFeedbacks = self.feedbackListService.fetchFeedbacksByRecentDate()
-        self?.tableView.reloadSections(self.sectionToReload, with: .none)
+        self?.newDustFeedbacks = self?.feedbackListService.fetchFeedbacksByRecentDate()
+        self?.tableView.reloadSections(self?.sectionToReload, with: .none)
       }
       .action(title: "제목순") { [weak self] _, _ in
-        self?.newDustFeedbacks = self.feedbackListService.fetchFeedbacksByTitle()
-        self?.tableView.reloadSections(self.sectionToReload, with: .none)
+        self?.newDustFeedbacks = self?.feedbackListService.fetchFeedbacksByTitle()
+        self?.tableView.reloadSections(self?.sectionToReload, with: .none)
       }
       .action(title: "북마크") { [weak self] _, _ in
-        self?.newDustFeedbacks = self.feedbackListService.fetchFeedbacksByBookmark()
-        self?.tableView.reloadSections(self.sectionToReload, with: .none)
+        self?.newDustFeedbacks = self?.feedbackListService.fetchFeedbacksByBookmark()
+        self?.tableView.reloadSections(self?.sectionToReload, with: .none)
       }
       .action(title: "취소", style: .cancel)
       .present(to: self)
@@ -119,13 +119,12 @@ extension FeedbackViewController: UITableViewDataSource {
     guard let cell = tableView
       .dequeueReusableCell(withIdentifier: reuseIdentifiers[indexPath.section], for: indexPath)
       as? FeedbackCell else { return UITableViewCell() }
-    cell.delegate = self
     
     if let newDustFeedbacks = newDustFeedbacks {
-      cell.configure(feedbackContents: newDustFeedbacks[indexPath.row])
+      cell.configure(with: newDustFeedbacks[indexPath.row])
     } else {
       let feedback = feedbackListService.fetchFeedbacksByBookmark()
-      cell.configure(feedbackContents: feedback[indexPath.row])
+      cell.configure(with: feedback[indexPath.row])
     }
     cell.setBookmarkButtonState(isBookmarkedByTitle: isBookmarkedByTitle)
     return cell
@@ -228,7 +227,7 @@ extension FeedbackViewController: UICollectionViewDelegate {
     collectionView.deselectItem(at: indexPath, animated: true)
     guard let currentCell = collectionView.cellForItem(at: indexPath)
       as? RecommendCollectionViewCell else { return }
-    pushDetailViewController(feedbackTitle: currentCell.title)
+    pushDetailViewController(title: currentCell.title)
   }
 }
 

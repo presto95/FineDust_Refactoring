@@ -10,9 +10,9 @@ import SWXMLHash
 
 protocol DustAPIResponseType: XMLIndexerDeserializable {
   
-  associatedtype Item
-  
   associatedtype Result
+  
+  associatedtype Item
   
   var result: Result { get }
   

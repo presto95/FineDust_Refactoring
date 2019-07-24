@@ -36,17 +36,13 @@ protocol LocationObserver: class {
 extension LocationObserver where Self: UIViewController {
   
   func handleIfFail(_ notification: Notification) {
-    if let error = notification.locationTaskError {
-      errorLog(error.localizedDescription)
-      Banner.show(title: error.localizedDescription)
-    }
+    errorLog(error.localizedDescription)
+    Banner.show(title: error.localizedDescription)
   }
   
   func handleIfAuthorizationDenied(_ notification: Notification) {
-    if let error = notification.locationTaskError {
-      errorLog(error.localizedDescription)
-      Banner.show(title: error.localizedDescription)
-    }
+    errorLog(error.localizedDescription)
+    Banner.show(title: error.localizedDescription)
   }
   
   /// 위의 세 경우에 대한 옵저버 등록.

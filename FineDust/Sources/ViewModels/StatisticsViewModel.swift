@@ -23,10 +23,16 @@ final class StatisticsViewModel {
   
   private let selectedSegmentedControlIndexRelay = BehaviorRelay(value: 0)
   
+  private let disposeBag = DisposeBag()
+  
   private let intakeService: IntakeServiceType
   
-  init(intakeService: IntakeServiceType = IntakeService()) {
+  private let persistenceService: PersistenceServiceType
+  
+  init(intakeService: IntakeServiceType = IntakeService(),
+       persistenceService: PersistenceServiceType = PersistenceService()) {
     self.intakeService = intakeService
+    self.persistenceService = persistenceService
   }
 }
 
@@ -45,9 +51,24 @@ extension StatisticsViewModel: StatisticsViewModelOutputs {
 }
 
 extension StatisticsViewModel {
-
+  
   var inputs: StatisticsViewModelInputs { return self }
   
   var outputs: StatisticsViewModelOutputs { return self }
 }
 
+// MARK: - Private Method
+
+private extension StatisticsViewModel {
+  
+  func requestIntake() {
+    intakeService.requestIntakesInWeek()
+      .subscribe(
+        onNext: { dustIntakes in
+          <#code#>
+      }, onError: { error in
+        <#code#>
+      })
+      .disposed(by: disposeBag)
+  }
+}
