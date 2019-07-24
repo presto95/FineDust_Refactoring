@@ -1,0 +1,19 @@
+disabled_rules:
+- leading_whitespace
+- trailing_whitespace
+
+excluded:
+- FineDust/Supports/AppDelegate.swift
+- FineDust/Sources/GeoConverter.swift
+- FineDustTests/
+- FineDust/SWXMLHash
+- Pods/
+
+line_length:
+  warning: 99
+  error: 120
+
+identifier_name:
+  excluded:
+    - x
+    - y
