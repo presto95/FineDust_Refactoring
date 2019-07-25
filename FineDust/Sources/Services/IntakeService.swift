@@ -31,7 +31,7 @@ final class IntakeService: IntakeServiceType {
   
   func requestTodayIntake() -> Observable<DustIntake> {
     return .create { observer in
-      self.dustAPIService.requestDayInfo()
+      self.dustAPIService.dayInfo()
         .subscribe(onNext: { hourlyFineDustIntake, hourlyUltrafineDustIntake in
           self.healthKitService
             .requestTodayDistancePerHour { [weak self] hourlyDistance in
@@ -57,6 +57,23 @@ final class IntakeService: IntakeServiceType {
   
   func requestIntakesInWeek() -> Observable<[DustIntake]> {
     return .create { observer in
+      let startDate = Date.before(days: 6)
+      let endDate = Date.before(days: 1)
+      let savedIntakePerDate = self.persistenceService.fetchIntakes(from: startDate, to: endDate)
+      var fineDustIntakePerDate = [Date: Int]()
+      var ultraFineDustIntakePerDate = [Date: Int]()
+      let dates = Date.between(startDate, endDate)
+      for date in dates {
+        guard let savedIntake = savedIntakePerDate[date] else {
+          self.dustAPIService.dayInfo(from: date, to: endDate)
+            .subscribe(
+              onNext: { hourlyFineDustIntakePerDate, hourlyUltraFineDustIntakePerDate in
+              <#code#>
+            }, onError: { error in
+              observer.onError(error)
+            })
+            .disposed(by: self.disposeBag)
+      }
       return Disposables.create()
     }
   }

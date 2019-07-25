@@ -39,6 +39,8 @@ final class IntakeSpeechBubbleView: UIView {
   }
 }
 
+// MARK: - Private Method
+
 private extension IntakeSpeechBubbleView {
   
   func bindViewModel() {
@@ -59,6 +61,8 @@ private extension IntakeSpeechBubbleView {
   }
 }
 
+// MARK: - Reactive Extension
+
 extension Reactive where Base: IntakeSpeechBubbleView {
   
   var dustType: Binder<IntakeSpeechBubbleView.DustType> {
@@ -68,8 +72,8 @@ extension Reactive where Base: IntakeSpeechBubbleView {
   }
   
   var value: Binder<Int> {
-    return .init(base) { base, value in
-      base.viewModel.setValue(value)
+    return .init(base) { target, value in
+      target.viewModel.setValue(value)
     }
   }
 }

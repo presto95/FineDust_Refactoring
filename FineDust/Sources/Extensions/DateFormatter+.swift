@@ -35,4 +35,9 @@ extension DateFormatter {
   static let day = DateFormatter().then {
     $0.dateFormat = "d"
   }
+  
+  /// `a hh : mm`
+  static let time = DateFormatter().then {
+    $0.dateFormat = "a hh : mm"
+  }
 }

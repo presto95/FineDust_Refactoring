@@ -10,12 +10,6 @@ import RxSwift
 
 protocol IntakeServiceType {
   
-  /// 오늘의 미세먼지 및 초미세먼지 섭취량 요청.
-  func requestTodayIntake(completion: @escaping (Int?, Int?, Error?) -> Void)
-  
-  /// 지정 `Date`로부터 일주일 간의 미세먼지 섭취량 요청.
-  func requestIntakesInWeek(completion: @escaping ([Int]?, [Int]?, Error?) -> Void)
-  
   func requestTodayIntake() -> Observable<DustIntake>
   
   func requestIntakesInWeek() -> Observable<[DustIntake]>

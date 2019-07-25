@@ -8,6 +8,7 @@ target 'FineDust' do
   # Pods for FineDust
   pod 'RxSwift'
   pod 'RxOptional'
+  pod 'RxViewController'
   pod 'SnapKit'
   pod 'SVProgressHUD'
   pod 'Then'

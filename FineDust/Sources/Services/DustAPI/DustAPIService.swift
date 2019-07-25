@@ -20,14 +20,15 @@ final class DustAPIService: DustAPIServiceType {
     self.xmlParser = xmlParser
   }
   
-  func requestObservatory() -> Observable<DustAPIObservatoryResponse> {
+  func observatory() -> Observable<String> {
     return .create { observer in
       self.provider.request(.observatory) { result in
         switch result {
         case let .success(response):
           do {
             let decoded = try self.validate(response, to: DustAPIObservatoryResponse.self)
-            observer.onNext(decoded)
+            let observatory = decoded.observatory ?? ""
+            observer.onNext(observatory)
             observer.onCompleted()
           } catch {
             observer.onError(error)
@@ -40,7 +41,7 @@ final class DustAPIService: DustAPIServiceType {
     }
   }
   
-  func requestRecentTimeInfo() -> Observable<RecentDustInfo> {
+  func recentTimeInfo() -> Observable<RecentDustInfo> {
     return .create { observer in
       self.provider.request(.recentTimeInfo) { result in
         switch result {
@@ -69,7 +70,7 @@ final class DustAPIService: DustAPIServiceType {
     }
   }
   
-  func requestDayInfo() -> Observable<(HourIntakePair, HourIntakePair)> {
+  func dayInfo() -> Observable<(HourIntakePair, HourIntakePair)> {
     return .create { observer in
       self.provider.request(.dayInfo) { result in
         switch result {
@@ -100,7 +101,7 @@ final class DustAPIService: DustAPIServiceType {
     }
   }
   
-  func requestDayInfo(from startDate: Date, to endDate: Date) -> Observable<(DateHourIntakePair, DateHourIntakePair)> {
+  func dayInfo(from startDate: Date, to endDate: Date) -> Observable<(DateHourIntakePair, DateHourIntakePair)> {
     return .create { observer in
       self.provider.request(.daysInfo(startDate: startDate, endDate: endDate)) { result in
         switch result {

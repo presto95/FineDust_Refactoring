@@ -35,6 +35,9 @@ PODS:
   - RxRelay (5.0.0):
     - RxSwift (~> 5)
   - RxSwift (5.0.0)
+  - RxViewController (1.0.0):
+    - RxCocoa (~> 5.0)
+    - RxSwift (~> 5.0)
   - SnapKit (5.0.0)
   - SVProgressHUD (2.2.5)
   - SWXMLHash (4.9.0)
@@ -49,6 +52,7 @@ DEPENDENCIES:
   - RxDataSources
   - RxOptional
   - RxSwift
+  - RxViewController
   - SnapKit
   - SVProgressHUD
   - SWXMLHash
@@ -71,6 +75,7 @@ SPEC REPOS:
     - RxOptional
     - RxRelay
     - RxSwift
+    - RxViewController
     - SnapKit
     - SVProgressHUD
     - SWXMLHash
@@ -92,11 +97,12 @@ SPEC CHECKSUMS:
   RxOptional: 9904e2219d59260c3c171273d475b2126de187e8
   RxRelay: 4f7409406a51a55cd88483f21ed898c234d60f18
   RxSwift: 8b0671caa829a763bbce7271095859121cbd895f
+  RxViewController: 7330a46e5c31cd680db169da4c9fc8676e975a81
   SnapKit: fd22d10eb9aff484d79a8724eab922c1ddf89bcf
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   SWXMLHash: 87b0006848a548b7f9485b40bc71721b3ae39add
   Then: 0157115e883545c77967b452fe74a1d25fb796e1
 
-PODFILE CHECKSUM: ff912d37241573fc4947e106cc1f30c16876248a
+PODFILE CHECKSUM: e7911ed5d815d7686f383237cf642dbd989b27e9
 
 COCOAPODS: 1.7.3

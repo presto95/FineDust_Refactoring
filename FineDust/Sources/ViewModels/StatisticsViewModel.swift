@@ -66,7 +66,8 @@ private extension StatisticsViewModel {
       .subscribe(
         onNext: { dustIntakes in
           <#code#>
-      }, onError: { error in
+      },
+        onError: { error in
         <#code#>
       })
       .disposed(by: disposeBag)

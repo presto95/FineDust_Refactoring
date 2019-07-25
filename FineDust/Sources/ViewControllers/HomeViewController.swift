@@ -8,24 +8,40 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
+import RxViewController
+
 final class HomeViewController: UIViewController {
   
-  // MARK: - IBOutlet
+  private let disposeBag = DisposeBag()
+  
+  fileprivate let viewModel = HomeViewModel()
   
   @IBOutlet private weak var fineDustSpeechBalloonBackgroundView: UIView!
   
   @IBOutlet private weak var ultraFineDustSpeechBalloonBackgroundView: UIView!
   
   @IBOutlet private weak var distanceLabel: UILabel!
+  
   @IBOutlet private weak var stepCountLabel: UILabel!
+  
   @IBOutlet private weak var timeLabel: UILabel!
+  
   @IBOutlet private weak var locationLabel: UILabel!
+  
   @IBOutlet private weak var gradeLabel: UILabel!
+  
   @IBOutlet private weak var fineDustLabel: UILabel!
+  
   @IBOutlet private weak var fineDustImageView: UIImageView!
+  
   @IBOutlet private weak var currentDistance: UILabel!
+  
   @IBOutlet private weak var currentWalkingCount: UILabel!
+  
   @IBOutlet private weak var dataContainerView: UIView!
+  
   @IBOutlet private weak var authorizationButton: UIButton!
   
   private let fineDustSpeechBalloonView
@@ -34,59 +50,19 @@ final class HomeViewController: UIViewController {
   private let ultraFineDustSpeechBalloonView
     = UIView.instantiate(fromType: IntakeSpeechBubbleView.self)
   
-  // MARK: - Properties
-  
-  /// 한번만 표시해주기 위한 프로퍼티.
   private var isPresented: Bool = false
   
-  /// 미세먼지 애니메이션을 움직이게 할 타이머.
   private var timer: Timer?
-  
-  private let persistenceService = PersistenceService()
-  private let healthKitService = HealthKitService()
-  private let dustAPIService = DustAPIService()
-  private let intakeService = IntakeService()
-  
-  /// 오전(후) 시 : 분 으로 나타내주는 프로퍼티.
-  private let dateFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "a hh : mm"
-    return formatter
-  }()
-  
-  // MARK: IBAction
-  
-  @IBAction func authorizationButtonDidTap(_ sender: Any) {
-    let isHealthKitAuthorized = healthKitService.isAuthorized && healthKitService.isDetermined
-    let isLocationAuthorized = LocationManager.shared.authorizationStatus == .authorizedWhenInUse
-      || LocationManager.shared.authorizationStatus == .authorizedAlways
-    let healthKitAction = UIAlertAction(title: "건강 APP", style: .default) { _ in
-      self.openHealthApp()
-    }
-    let locationAction = UIAlertAction(title: "위치 정보", style: .default) { _ in
-      self.openSettingApp()
-    }
-    let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-    let title = "정보가 표시되지 않나요?"
-    let message = "정보를 확인하려면 건강 앱 및 위치에 대한 권한을 허용해야 합니다."
-    let alert = UIAlertController(title: title,
-                                  message: message,
-                                  preferredStyle: .actionSheet)
-    if !isHealthKitAuthorized { alert.addAction(healthKitAction) }
-    if !isLocationAuthorized { alert.addAction(locationAction) }
-    alert.addAction(cancelAction)
-    present(alert, animated: true, completion: nil)
-  }
-  
-  // MARK: - Life Cycle
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    bindViewModel()
     setUp()
   }
   
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
+    viewModel.setPresented()
     if !isPresented {
       isPresented.toggle()
       updateHealthKitInfo()
@@ -94,15 +70,35 @@ final class HomeViewController: UIViewController {
     }
   }
   
-  deinit {
-    unregisterLocationObserver()
-    unregisterHealthKitAuthorizationObserver()
+  func bindViewModel() {
+    
+    rx.viewDidAppear
+      .distinctUntilChanged()
+      .subscribe(onNext: { [weak self] _ in
+        self?.viewModel.setPresented()
+      })
+      .disposed(by: disposeBag)
+    
+    authorizationButton.rx.tap.asDriver()
+      .drive(onNext: { [weak self] _ in
+        self?.viewModel.tapAuthorizationButton()
+      })
+      .disposed(by: disposeBag)
+    
+    viewModel.authorizationButtonTapped.asDriver(onErrorJustReturn: Void())
+      .drive(onNext: { [weak self] _ in
+        guard let self = self else { return }
+        let alert = self.makeAuthorizationAlert()
+        self.present(alert, animated: true, completion: nil)
+      })
+      .disposed(by: disposeBag)
   }
 }
 
 // MARK: - LocationObserver
 
 extension HomeViewController: LocationObserver {
+  
   func handleIfSuccess(_ notification: Notification) {
     updateAPIInfo()
   }
@@ -115,15 +111,6 @@ extension HomeViewController: LocationObserver {
           DispatchQueue.main.async {
             self.fineDustSpeechBalloonView.rx.value.onNext(data.todayFineDust)
             self.ultraFineDustSpeechBalloonView.rx.value.onNext(data.todayUltraFineDust)
-            //            self.intakeFineDustLable.countFromZero(to: data.todayFineDust,
-            //                                                   unit: .microgram,
-            //                                                   interval: 1.0 /
-            //                                                    Double(data.todayFineDust))
-            
-            //            self.intakeUltrafineDustLabel.countFromZero(to: data.todayUltrafineDust,
-            //                                                        unit: .microgram,
-            //                                                        interval: 1.0 /
-            //                                                          Double(data.todayUltrafineDust))
             self.fineDustImageView.image
               = UIImage(named: IntakeGrade(intake: data.todayFineDust + data.todayUltraFineDust)
                 .imageName)
@@ -154,8 +141,10 @@ extension HomeViewController: HealthKitAuthorizationObserver {
 // MARK: - Methods
 
 extension HomeViewController {
-  /// MainViewController 초기 설정 메소드.
+  
   private func setUp() {
+    timeLabel.text = DateFormatter.time.string(from: .init())
+    flipFineDustImageView()
     fineDustSpeechBalloonBackgroundView.addSubview(fineDustSpeechBalloonView) {
       $0.edges.equalToSuperview()
     }
@@ -163,11 +152,10 @@ extension HomeViewController {
       $0.edges.equalToSuperview()
     }
     
-    registerLocationObserver()
+    
     registerHealthKitAuthorizationObserver()
-    timeLabel.text = dateFormatter.string(from: Date())
-    //presentOpenHealthAppAlert()
-    updateFineDustImageView()
+    
+    
     
     // InfoView들의 둥글 모서리와 shadow 추가
     dataContainerView.layer
@@ -299,14 +287,7 @@ extension HomeViewController {
                 = UIImage(named: IntakeGrade(intake: fineDust + ultrafineDust).imageName)
               self.fineDustSpeechBalloonView.rx.value.onNext(fineDust)
               self.ultraFineDustSpeechBalloonView.rx.value.onNext(ultrafineDust)
-              //              self.intakeFineDustLable.countFromZero(to: fineDust,
-              //                                                     unit: .microgram,
-              //                                                     interval: 1.0 /
-              //                                                      Double(fineDust))
-              //              self.intakeUltrafineDustLabel.countFromZero(to: ultrafineDust,
-              //                                                          unit: .microgram,
-              //                                                          interval: 1.0 /
-              //                                                            Double(ultrafineDust))
+
             }
           }
         }
@@ -314,29 +295,11 @@ extension HomeViewController {
     }
   }
   
-  /// 미세먼지 애니메이션
-  private func updateFineDustImageView() {
-    timer?.invalidate()
-    timer = Timer.scheduledTimer(withTimeInterval: 0.5,
-                                 repeats: true
-    ) { [weak self] _ in
-      guard let identity = self?.fineDustImageView.transform.isIdentity else {
-        return
-      }
-      
-      if identity {
-        self?.fineDustImageView.transform = CGAffineTransform(scaleX: -1, y: 1)
-      } else {
-        self?.fineDustImageView.transform = .identity
-      }
-    }
-    timer?.fire()
-  }
   
   /// 권한이 없을시 권한설정을 도와주는 AlertController.
   private func presentOpenHealthAppAlert() {
     
-    if !healthKitService.isAuthorized && healthKitService.isDetermined {
+    if !healthKitService.isAuthorized {
       UIAlertController
         .alert(title: "건강 앱 접근 권한이 없습니다.",
                message:
@@ -353,28 +316,49 @@ extension HomeViewController {
     }
   }
   
-  private func openHealthApp() {
-    guard let url = URL(string: "x-apple-health://") else {
-      return
-    }
-    
-    if UIApplication.shared.canOpenURL(url) {
-      UIApplication.shared.open(url)
-    }
-  }
-  
-  private func openSettingApp() {
-    guard let url = URL(string: UIApplication.openSettingsURLString) else {
-      return
-    }
-    
-    if UIApplication.shared.canOpenURL(url) {
-      UIApplication.shared.open(url)
-    }
-  }
-  
   private func fontSizeByScreen(size: CGFloat) -> CGFloat {
     let value = size / 414
     return UIScreen.main.bounds.width * value
+  }
+}
+
+// MARK: - Private Method
+
+private extension HomeViewController {
+  
+  func makeAuthorizationAlert() -> UIAlertController {
+    let isHealthKitAuthorized = healthKitService.isAuthorized
+    let isLocationAuthorized = locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways
+    let alert = UIAlertController(title: "정보가 표시되지 않나요?",
+                                  message: "정보를 확인하려면 건강 및 위치에 대한 권한을 허용해야 합니다.",
+                                  preferredStyle: .actionSheet)
+    let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+    if !isHealthKitAuthorized {
+      let healthKitAction = UIAlertAction(title: "건강 앱", style: .default) { [weak self] _ in
+        self?.viewModel.tapHealthAppOpeningButton()
+      }
+      alert.addAction(healthKitAction)
+    }
+    if !isLocationAuthorized {
+      let locationAction = UIAlertAction(title: "위치 정보", style: .default) { [weak self] _ in
+        self?.viewModel.tapSettingAppOpeningButton()
+      }
+      alert.addAction(locationAction)
+    }
+    alert.addAction(cancelAction)
+    return alert
+  }
+  
+  private func flipFineDustImageView() {
+    timer?.invalidate()
+    timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+      guard let identity = self?.fineDustImageView.transform.isIdentity else { return }
+      if identity {
+        self?.fineDustImageView.transform = .init(scaleX: -1, y: 1)
+      } else {
+        self?.fineDustImageView.transform = .identity
+      }
+    }
+    timer?.fire()
   }
 }

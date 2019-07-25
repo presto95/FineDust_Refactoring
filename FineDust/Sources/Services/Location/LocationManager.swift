@@ -62,8 +62,7 @@ extension LocationManager: LocationManagerType {
       case .authorizedAlways, .authorizedWhenInUse:
         self.startUpdatingLocation()
       default:
-        NotificationCenter.default
-          .post(name: .locationPermissionDenied, object: nil, userInfo: ["status": status])
+        LocationObserver.shared.didAuthorizationDenied.accept(Void())
       }
     }
   }
@@ -86,27 +85,19 @@ extension LocationManager: LocationManagerType {
         .subscribe(
           onNext: { address in
             SharedInfo.shared.address = address
-            self.dustAPIService.requestObservatory()
+            self.dustAPIService.observatory()
               .subscribe(
                 onNext: { response in
-                  guard let observatory = response.observatory else { return }
-                  SharedInfo.shared.observatory = observatory
-                  NotificationCenter.default
-                    .post(name: .didSuccessUpdatingAllLocationTasks, object: nil)
+                  SharedInfo.shared.observatory = response
+                  LocationObserver.shared.didSuccess.accept(Void())
               },
                 onError: { error in
-                  NotificationCenter.default
-                    .post(name: .didFailUpdatingAllLocationTasks,
-                          object: nil,
-                          userInfo: ["error": error])
+                  LocationObserver.shared.didError.accept(error)
               })
               .disposed(by: self.disposeBag)
         },
           onError: { error in
-            NotificationCenter.default
-              .post(name: .didFailUpdatingAllLocationTasks,
-                    object: nil,
-                    userInfo: ["error": error])
+            LocationObserver.shared.didError.accept(error)
         })
         .disposed(by: self.disposeBag)
     }
@@ -114,10 +105,7 @@ extension LocationManager: LocationManagerType {
   
   var errorHandler: ((Error) -> Void)? {
     return { error in
-      NotificationCenter.default
-        .post(name: .didFailUpdatingAllLocationTasks,
-              object: nil,
-              userInfo: ["error": error])
+      LocationObserver.shared.didError.accept(error)
     }
   }
   
