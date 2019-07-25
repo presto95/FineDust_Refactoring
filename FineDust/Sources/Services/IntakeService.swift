@@ -59,7 +59,7 @@ final class IntakeService: IntakeServiceType {
     return .create { observer in
       let startDate = Date.before(days: 6)
       let endDate = Date.before(days: 1)
-      let savedIntakePerDate = self.persistenceService.fetchIntakes(from: startDate, to: endDate)
+      let savedIntakePerDate = self.persistenceService.intakes(from: startDate, to: endDate)
       var fineDustIntakePerDate = [Date: Int]()
       var ultraFineDustIntakePerDate = [Date: Int]()
       let dates = Date.between(startDate, endDate)
@@ -81,7 +81,7 @@ final class IntakeService: IntakeServiceType {
   func requestIntakesInWeek(completion: @escaping ([Int]?, [Int]?, Error?) -> Void) {
     let startDate = Date.before(days: 6)
     let endDate = Date.before(days: 1)
-    let coreDataIntakePerDate = persistenceService.fetchIntakes(from: startDate, to: endDate)
+    let coreDataIntakePerDate = persistenceService.intakes(from: startDate, to: endDate)
     var fineDustIntakePerDate: [Date: Int] = [:]
     var ultrafineDustIntakePerDate: [Date: Int] = [:]
     let dates = Date.between(startDate, endDate)

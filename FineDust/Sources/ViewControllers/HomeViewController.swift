@@ -18,37 +18,24 @@ final class HomeViewController: UIViewController {
   
   fileprivate let viewModel = HomeViewModel()
   
+  @IBOutlet private weak var authorizationButton: UIButton!
+  
   @IBOutlet private weak var fineDustSpeechBalloonBackgroundView: UIView!
   
   @IBOutlet private weak var ultraFineDustSpeechBalloonBackgroundView: UIView!
   
-  @IBOutlet private weak var distanceLabel: UILabel!
-  
-  @IBOutlet private weak var stepCountLabel: UILabel!
-  
-  @IBOutlet private weak var timeLabel: UILabel!
-  
-  @IBOutlet private weak var locationLabel: UILabel!
-  
-  @IBOutlet private weak var gradeLabel: UILabel!
-  
-  @IBOutlet private weak var fineDustLabel: UILabel!
-  
   @IBOutlet private weak var fineDustImageView: UIImageView!
   
-  @IBOutlet private weak var currentDistance: UILabel!
-  
-  @IBOutlet private weak var currentWalkingCount: UILabel!
-  
-  @IBOutlet private weak var dataContainerView: UIView!
-  
-  @IBOutlet private weak var authorizationButton: UIButton!
+  @IBOutlet private weak var infoContainerView: UIView!
   
   private let fineDustSpeechBalloonView
     = UIView.instantiate(fromType: IntakeSpeechBubbleView.self)
   
   private let ultraFineDustSpeechBalloonView
     = UIView.instantiate(fromType: IntakeSpeechBubbleView.self)
+  
+  private let infoView
+    = UIView.instantiate(fromType: HomeInfoView.self)
   
   private var isPresented: Bool = false
   
@@ -158,9 +145,9 @@ extension HomeViewController {
     
     
     // InfoView들의 둥글 모서리와 shadow 추가
-    dataContainerView.layer
+    infoContainerView.layer
       .applyShadow(color: .black, alpha: 0.5, x: 0, y: 4, blur: 16, spread: 0)
-    dataContainerView.layer.cornerRadius = 10
+    infoContainerView.layer.cornerRadius = 10
     
     // 해상도 별 폰트 크기 조정.
     let size = fontSizeByScreen(size: currentWalkingCount.font.pointSize)

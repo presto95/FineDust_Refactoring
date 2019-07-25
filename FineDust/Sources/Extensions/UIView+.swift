@@ -8,17 +8,10 @@
 
 import UIKit
 
-import SnapKit
-
 extension UIView {
 
   static func instantiate<View>(fromType type: View.Type) -> View where View: UIView {
     return UINib(nibName: View.classNameToString, bundle: nil)
       .instantiate(withOwner: nil, options: nil).first as? View ?? View()
-  }
-  
-  func addSubview(_ view: UIView, constraints: (ConstraintMaker) -> Void) {
-    addSubview(view)
-    view.snp.makeConstraints(constraints)
   }
 }

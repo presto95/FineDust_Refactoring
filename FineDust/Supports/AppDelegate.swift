@@ -38,7 +38,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
       $0.barTintColor = .white
     }
     
-    if persistenceService.fetchLastAccessedDate() == nil {
+    if persistenceService.lastAccessedDate() == nil {
       persistenceService.saveLastAccessedDate(.init())
     }
     healthKitManager.requestAuthorization()

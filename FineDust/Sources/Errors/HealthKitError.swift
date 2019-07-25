@@ -10,13 +10,13 @@ enum HealthKitError: Error {
   
   /// HealthKitManager의 파라미터 값들이 .stepCount - .count() 와
   /// .distanceWalkingRunning - .meter() 짝으로 오지 않을때 에러.
-  case notMatchingArguments
+  case argumentsNotMatched
   
   /// HealthKitManager의 indentifier 인자 값이 예상치 못한 값이 들어올때의 에러.
   case unexpectedIdentifier
   
   /// HealthKit query를 만들때 생기는 에러. 권한이 결정되지 않았을때도 발생.
-  case queryNotValid
+  case invalidQuery
   
   /// HealthKit query가 실행하는데 실패했을 경우.
   case queryExecutedFailed
@@ -32,11 +32,11 @@ extension HealthKitError {
   
   var localizedDescription: String {
     switch self {
-    case .notMatchingArguments:
+    case .argumentsNotMatched:
       return "알 수 없는 오류 발생"
     case .unexpectedIdentifier:
       return "알 수 없는 오류 발생"
-    case .queryNotValid:
+    case .invalidQuery:
       return "건강 앱 접근 권한이 없습니다."
     case .queryNotSearched:
       return "건강 앱 접근 권한이 없습니다."

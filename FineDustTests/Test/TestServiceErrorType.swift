@@ -24,7 +24,7 @@ class TestServiceErrorType: XCTestCase {
   }
   
   func test_healthKitError() {
-    let error: ServiceErrorType = HealthKitError.queryNotValid
-    XCTAssertEqual(error.localizedDescription, HealthKitError.queryNotValid.localizedDescription)
+    let error: ServiceErrorType = HealthKitError.invalidQuery
+    XCTAssertEqual(error.localizedDescription, HealthKitError.invalidQuery.localizedDescription)
   }
 }

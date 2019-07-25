@@ -23,7 +23,7 @@ final class PersistenceService: PersistenceServiceType {
     return realm.objects(IntakeModel.self)
   }
   
-  func fetchLastAccessedDate() -> Date? {
+  func lastAccessedDate() -> Date? {
     return user?.lastAccessedDate
   }
   
@@ -33,7 +33,7 @@ final class PersistenceService: PersistenceServiceType {
     }
   }
   
-  func fetchIntakes(from startDate: Date, to endDate: Date) -> DateIntakeValuePair {
+  func intakes(from startDate: Date, to endDate: Date) -> DateIntakeValuePair {
     var dateIntakeValuePair = DateIntakeValuePair()
     let dates = Date.between(startDate.start, endDate.end)
     let intakesInDates = Array(intakes.filter { (startDate...endDate).contains($0.date) })
@@ -70,7 +70,7 @@ final class PersistenceService: PersistenceServiceType {
     }
   }
   
-  func fetchLastSavedData() -> LastSavedData? {
+  func lastSavedData() -> LastSavedData? {
     guard let user = user else { return nil }
     let lastSavedData = LastSavedData(
       todayFineDust: Int(user.todayFineDust),

@@ -10,17 +10,17 @@ import Foundation
 
 protocol PersistenceServiceType: class {
   
-  func fetchLastAccessedDate() -> Date?
+  func lastAccessedDate() -> Date?
   
   func saveLastAccessedDate(_ date: Date)
   
-  func fetchIntakes(from startDate: Date, to endDate: Date) -> DateIntakeValuePair
+  func intakes(from startDate: Date, to endDate: Date) -> DateIntakeValuePair
   
   func saveIntake(_ intake: DustIntake, at date: Date)
   
   func saveIntakes(_ intakes: [DustIntake], at dates: [Date])
   
-  func fetchLastSavedData() -> LastSavedData?
+  func lastSavedData() -> LastSavedData?
   
   func saveLastSteps(_ steps: Int)
   

@@ -10,11 +10,10 @@ import UIKit
 
 extension UIImage {
   
-  // 이미지 크기 변경.
   func resize(newWidth: CGFloat) -> UIImage? {
     let scale = newWidth / size.width
     let newHeight = size.height * scale
-    UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
+    UIGraphicsBeginImageContext(.init(width: newWidth, height: newHeight))
     draw(in: .init(x: 0, y: 0, width: newWidth, height: newHeight))
     let newImage = UIGraphicsGetImageFromCurrentImageContext()
     UIGraphicsEndImageContext()

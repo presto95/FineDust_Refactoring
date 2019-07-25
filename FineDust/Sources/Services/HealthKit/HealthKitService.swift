@@ -172,7 +172,7 @@ private extension HealthKitService {
                                               intervalComponents: interval)
       query.initialResultsHandler = { query, results, error in
         if let _ = error {
-          observer.onError(HealthKitError.queryNotValid)
+          observer.onError(HealthKitError.invalidQuery)
         }
         if let results = results {
           if results.statistics().isEmpty {
