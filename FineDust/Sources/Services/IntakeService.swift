@@ -31,6 +31,7 @@ final class IntakeService: IntakeServiceType {
   
   func requestTodayIntake() -> Observable<DustIntake> {
     return .create { observer in
+      
       self.dustAPIService.dayInfo()
         .subscribe(onNext: { hourlyFineDustIntake, hourlyUltrafineDustIntake in
           self.healthKitService

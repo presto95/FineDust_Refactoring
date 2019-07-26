@@ -59,7 +59,7 @@ final class HomeViewController: UIViewController {
   
   func bindViewModel() {
     
-    rx.viewDidAppear
+    rx.viewWillAppear
       .distinctUntilChanged()
       .subscribe(onNext: { [weak self] _ in
         self?.viewModel.setPresented()
@@ -79,7 +79,14 @@ final class HomeViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
       })
       .disposed(by: disposeBag)
-  }
+    
+    viewModel.steps
+      .bind(to: infoView.rx.steps)
+      .disposed(by: disposeBag)
+    
+    viewModel.distance
+      .bind(to: infoView.rx.distance)
+      .disposed(by: disposeBag)
 }
 
 // MARK: - LocationObserver

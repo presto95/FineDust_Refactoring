@@ -30,6 +30,10 @@ protocol HomeViewModelOutputs {
   
   var intakeGrade: Observable<IntakeGrade> { get }
   
+  var steps: Observable<Int> { get }
+  
+  var distance: Observable<Int> { get }
+  
   var address: Observable<String> { get }
   
   var grade: Observable<DustGrade> { get }
@@ -39,9 +43,21 @@ protocol HomeViewModelOutputs {
 
 final class HomeViewModel {
   
+  private let disposeBag = DisposeBag()
+  
   private let isPresentedRelay = BehaviorRelay(value: false)
   
   private let authorizationButtonTappedRelay = PublishRelay<Void>()
+  
+  private let stepsRelay = PublishRelay<Int>()
+  
+  private let distanceRelay = PublishRelay<Int>()
+  
+  private let addressRelay = PublishRelay<String>()
+  
+  private let gradeRelay = PublishRelay<DustGrade>()
+  
+  private let recentFineDustValueRelay = PublishRelay<Int>()
   
   private let locationObserver = LocationObserver.shared
   
@@ -94,20 +110,55 @@ extension HomeViewModel: HomeViewModelOutputs {
   var authorizationButtonTapped: Observable<Void> {
     return authorizationButtonTappedRelay.asObservable()
   }
-}
-
-extension HomeViewModel {
   
-  var inputs: HomeViewModelInputs { return self }
-
-  var outputs: HomeViewModelOutputs { return self }
+  var todayFineDustValue: Observable<Int> {
+    
+  }
+  
+  var todayUltraFineDustValue: Observable<Int> {
+    
+  }
+  
+  var intakeGrade: Observable<IntakeGrade> {
+    
+  }
+  
+  var steps: Observable<Int> {
+    return stepsRelay.asObservable()
+  }
+  
+  var distance: Observable<Int> {
+    
+  }
+  
+  var address: Observable<String> {
+    
+  }
+  
+  var grade: Observable<DustGrade> {
+    
+  }
+  
+  var recentFineDustValue: Observable<Int> {
+    
+  }
 }
 
 // MARK: - Private Method
 
 private extension HomeViewModel {
   
-  
+  func updateHealthKitData() {
+    healthKitService.todaySteps()
+      .subscribe(onNext: { steps in
+        self.persistenceService.saveLastSteps(Int(steps))
+        self.stepsRelay.accept(Int(steps))
+      }, onError: { error in
+        // Todo: error handling
+        self.stepsRelay.accept(0)
+      })
+      .disposed(by: disposeBag)
+  }
   
   func openHealthApp() {
     guard let url = URL(string: "x-apple-health://") else { return }

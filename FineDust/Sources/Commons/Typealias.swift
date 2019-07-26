@@ -13,3 +13,5 @@ typealias HourIntakePair = [Hour: Int]
 typealias DateHourIntakePair = [Date: HourIntakePair]
 
 typealias DateIntakeValuePair = [Date: DustIntake]
+
+typealias Bookmark = [String: Bool]

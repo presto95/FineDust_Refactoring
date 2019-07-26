@@ -9,7 +9,9 @@
 import UIKit
 
 import RxCocoa
+import RxDataSources
 import RxSwift
+import RxViewController
 
 final class FeedbackViewController: UIViewController {
   
@@ -19,13 +21,14 @@ final class FeedbackViewController: UIViewController {
   
   @IBOutlet private weak var tableView: UITableView!
   
-  // MARK: - Properties
+  private let reuseIdentifiers = ["feedbackRecommendationCell", "feedbackListCell"]
   
-  var feedbackListService = FeedbackService()
-  private let reuseIdentifiers = ["recommendTableCell", "feedbackListCell"]
   private var feedbackCount = 0
+  
   private var newDustFeedbacks: [FeedbackContents]?
+  
   private var isBookmarkedByTitle: [String: Bool] = [:]
+  
   private var recommendFeedbacks: [FeedbackContents] = []
   
   private var fineDustIntake: Int = 30
@@ -33,8 +36,8 @@ final class FeedbackViewController: UIViewController {
   private var ultrafineDustIntake: Int = 20
   
   private var currentState: IntakeGrade = .good
-  private let sectionToReload: IndexSet = [1]
   
+  private let sectionToReload: IndexSet = [1]
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -48,14 +51,48 @@ final class FeedbackViewController: UIViewController {
   }
 }
 
+// MARK: - Private Method
+
 private extension FeedbackViewController {
   
   func bindViewModel() {
+    rx.viewWillAppear.asDriver(onErrorJustReturn: true)
+      .drive(onNext: { [weak self] _ in
+        self?.viewModel.setPresented()
+      })
+      .disposed(by: disposeBag)
+    
     viewModel.settingButtonTapped.asDriver(onErrorJustReturn: Void())
       .drive(onNext: { [weak self] _ in
         self?.presentSettingActionSheet()
       })
       .disposed(by: disposeBag)
+    
+    viewModel.sortRecentlyButtonTapped.asDriver(onErrorJustReturn: Void())
+      .drive(onNext: { [weak self] _ in
+        self?.newDustFeedbacks = self?.feedbackListService.fetchFeedbacksByRecentDate()
+        self?.tableView.reloadSections(.init(integer: 1), with: .automatic)
+      })
+      .disposed(by: disposeBag)
+    
+    viewModel.sortByTitleButtonTapped.asDriver(onErrorJustReturn: Void())
+      .drive(onNext: { [weak self] _ in
+        self?.newDustFeedbacks = self?.feedbackListService.fetchFeedbacksByTitle()
+        self?.tableView.reloadSections(.init(integer: 1), with: .automatic)
+      })
+      .disposed(by: disposeBag)
+    
+    viewModel.sortByBookmarkButtonTapped.asDriver(onErrorJustReturn: Void())
+      .drive(onNext: { [weak self] _ in
+        self?.newDustFeedbacks = self?.feedbackListService.fetchFeedbacksByBookmark()
+        self?.tableView.reloadSections(.init(integer: 1), with: .automatic)
+      })
+      .disposed(by: disposeBag)
+  }
+  
+  func setup() {
+    feedbackCount = feedbackListService.fetchFeedbackCount()
+    navigationController?.interactivePopGestureRecognizer?.delegate = nil
   }
   
   func presentSettingActionSheet() {
@@ -64,24 +101,16 @@ private extension FeedbackViewController {
              message: "정렬 방법을 선택해 주세요.",
              style: .actionSheet)
       .action(title: "최신순") { [weak self] _, _ in
-        self?.newDustFeedbacks = self?.feedbackListService.fetchFeedbacksByRecentDate()
-        self?.tableView.reloadSections(self?.sectionToReload, with: .none)
+        self?.viewModel.tapSortRecentlyButton()
       }
       .action(title: "제목순") { [weak self] _, _ in
-        self?.newDustFeedbacks = self?.feedbackListService.fetchFeedbacksByTitle()
-        self?.tableView.reloadSections(self?.sectionToReload, with: .none)
+        self?.viewModel.tapSortByTitleButton()
       }
       .action(title: "북마크") { [weak self] _, _ in
-        self?.newDustFeedbacks = self?.feedbackListService.fetchFeedbacksByBookmark()
-        self?.tableView.reloadSections(self?.sectionToReload, with: .none)
+        self?.viewModel.tapSortByBookmarkButton()
       }
       .action(title: "취소", style: .cancel)
       .present(to: self)
-  }
-  
-  func setup() {
-    feedbackCount = feedbackListService.fetchFeedbackCount()
-    navigationController?.interactivePopGestureRecognizer?.delegate = nil
   }
   
   func loadFeedback() {
@@ -118,7 +147,7 @@ extension FeedbackViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     guard let cell = tableView
       .dequeueReusableCell(withIdentifier: reuseIdentifiers[indexPath.section], for: indexPath)
-      as? FeedbackCell else { return UITableViewCell() }
+      as? FeedbackListCell else { return UITableViewCell() }
     
     if let newDustFeedbacks = newDustFeedbacks {
       cell.configure(with: newDustFeedbacks[indexPath.row])
@@ -150,7 +179,7 @@ extension FeedbackViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     tableView.deselectRow(at: indexPath, animated: true)
     guard let currentCell = tableView.cellForRow(at: indexPath)
-      as? FeedbackCell else { return }
+      as? FeedbackListCell else { return }
     pushDetailViewController(title: currentCell.title)
   }
   
@@ -205,11 +234,11 @@ extension FeedbackViewController: UICollectionViewDataSource {
     
     guard let cell = collectionView
       .dequeueReusableCell(withReuseIdentifier: "recommendCell",
-                           for: indexPath) as? RecommendCollectionViewCell
+                           for: indexPath) as? FeedbackRecommendationCell
       else { return UICollectionViewCell() }
     
     let feedback = recommendFeedbacks[indexPath.item]
-    cell.setCollectionViewCellProperties(dustFeedback: feedback)
+    cell.configure(with: feedback)
     return cell
   }
   
@@ -226,7 +255,7 @@ extension FeedbackViewController: UICollectionViewDelegate {
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     collectionView.deselectItem(at: indexPath, animated: true)
     guard let currentCell = collectionView.cellForItem(at: indexPath)
-      as? RecommendCollectionViewCell else { return }
+      as? FeedbackRecommendationCell else { return }
     pushDetailViewController(title: currentCell.title)
   }
 }
@@ -235,7 +264,7 @@ extension FeedbackViewController: UICollectionViewDelegate {
 
 extension FeedbackViewController: FeedbackListCellDelegate {
   
-  func feedbackListCell(_ feedbackListCell: FeedbackCell,
+  func feedbackListCell(_ feedbackListCell: FeedbackListCell,
                         didTapBookmarkButton button: UIButton) {
     button.isSelected.toggle()
     let title = feedbackListCell.title

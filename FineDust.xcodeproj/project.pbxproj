@@ -109,7 +109,7 @@
 		A62EB92ACB0C546E7521ED29BA716D42 /* RatioPieGraphView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 309926C6E607D02675EBA0D3E81CD9A9 /* RatioPieGraphView.xib */; };
 		A731BA3D75753181B566A7159E8B8286 /* HomeInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2988554BE2F9C32E1E791FDF7CF149 /* HomeInfoView.swift */; };
 		A77C3991F61E8CBB1EB40A486B303E58 /* Banner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F2BB0D542755B411571DD19E3064C3 /* Banner.swift */; };
-		A88FFB56BEE084C17CF57A5D5A60CC86 /* FeedbackCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA6C5AFF3D7FFB2C818346071FFAF50 /* FeedbackCell.swift */; };
+		A88FFB56BEE084C17CF57A5D5A60CC86 /* FeedbackListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA6C5AFF3D7FFB2C818346071FFAF50 /* FeedbackListCell.swift */; };
 		AE8B1104A29DBF982418B944D167DC36 /* DateFormatter+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023F3720FDBD4DC79BB671928F23C42F /* DateFormatter+.swift */; };
 		B488A42E26961E356F434BEF339ABF8A /* MockDustInfoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A86957F2DF71F8AA3D7F5948D81C3A4 /* MockDustInfoManager.swift */; };
 		B54B55F11F2CADE3FFCEE29C7CC764ED /* DustIntake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E451A38C90FB1DE08639FBD3301FA2 /* DustIntake.swift */; };
@@ -132,13 +132,11 @@
 		D1456C75F1ADE8C72EAF619A85DBA813 /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19FD3A67CBDAABFF63CC572A23F34E5D /* Home.storyboard */; };
 		D266A0E2725337BABF52594D5099A298 /* MockNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D976382D79F423DA692A7725F5CF5432 /* MockNetworkManager.swift */; };
 		D5FE38B2C7D78D9233FFD15C29AF8310 /* HomeInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E0D95C5D961BECDB2C54B60FA87919 /* HomeInfoViewModel.swift */; };
-		D672829B4AD9AB672B07460D15C87E37 /* FeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68A515A9A3D75446DB1DB2B643A528B6 /* FeedbackService.swift */; };
 		DA538970C099186A2BC0B044B4DD3E0A /* UIAlertController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5044DCFD2D334FA7263E4FBE7C816881 /* UIAlertController+.swift */; };
 		DB8311B8EAC1F9EE13038C1AEB2BEBAA /* FeedbackImportance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E385A65D662A4BFBB6BB8E47ABEE5D08 /* FeedbackImportance.swift */; };
 		DDBC9E24E6FA62BCE50C42347C9607A8 /* TestCoreDataIntakeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48590BBD3BFC373E6FB28BB30798BB45 /* TestCoreDataIntakeManager.swift */; };
 		DE8CCD7AE2A2BA8566162FEFAEC025E5 /* IntakeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D58E33E9E16E3D19F0C2DEC6138A7F /* IntakeService.swift */; };
 		E1F24F88DA1B9934D72BA5C142C5F384 /* FloatingPoint+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6435ACF82F05C86B87064C4A425057A /* FloatingPoint+.swift */; };
-		E3466A2192E9305264FAEDFB852F9F5C /* FeedbackServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FDB196844CABA4DA3FC52600E12F33 /* FeedbackServiceType.swift */; };
 		E43C0F33A0D1C1761796EF71AABEEBE6 /* FeedbackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B4A1033C1BE99C001CA2C98E63E304 /* FeedbackViewController.swift */; };
 		E46EDE542421E732585214FD6AEF79DF /* MockCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3FCFC0541EB93889CA32BD56C3F1D5 /* MockCoreDataManager.swift */; };
 		E919C61FD99B5D2B5ABEB5AE830587A0 /* FeedbackContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD4046146A04E7C79FD8CC5F3BCBA0F /* FeedbackContents.swift */; };
@@ -148,7 +146,7 @@
 		ECB0D7D196E7F35F86669C62E11FE215 /* DustAPIInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318EE6C1F6EC7BDB484E4719161FE66A /* DustAPIInfoResponse.swift */; };
 		EE6480458D429065D33A532501856FC2 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31C4C9826AA208B5039678B0CF3E819 /* HomeViewController.swift */; };
 		EE9E4E6DE7C603EB75BDE8A2EA97CF32 /* DustAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5892B6200CF61E727F87D5EC4D18F004 /* DustAPIError.swift */; };
-		F0DE044A17D2D36C806E715D10A95CB6 /* RecommendCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777C1D35AE46F6691183760B1F60A130 /* RecommendCollectionViewCell.swift */; };
+		F0DE044A17D2D36C806E715D10A95CB6 /* FeedbackRecommendationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777C1D35AE46F6691183760B1F60A130 /* FeedbackRecommendationCell.swift */; };
 		F3857A21E45C53DB127741FDE5AC28F2 /* FeedbackViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BA77FCA56DAEA1B695414CE2956CF8A /* FeedbackViewModel.swift */; };
 		F3FEC903328E87702903080011099030 /* MockCoreDataIntakeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1644E56E811886FA59628BFFAB345E0C /* MockCoreDataIntakeManager.swift */; };
 		F40A871390471F70EFA05E24A60B6836 /* Double+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CDEE7C87F8284A28E39617293E36D65 /* Double+.swift */; };
@@ -243,7 +241,6 @@
 		60D44A1CD7D5AEDEA52A7B5ACEC5D681 /* StickGraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StickGraphView.swift; sourceTree = "<group>"; };
 		6711652B3EFAC8972523E0654E3DC3AC /* XMLParserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMLParserType.swift; sourceTree = "<group>"; };
 		67E451A38C90FB1DE08639FBD3301FA2 /* DustIntake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DustIntake.swift; sourceTree = "<group>"; };
-		68A515A9A3D75446DB1DB2B643A528B6 /* FeedbackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackService.swift; sourceTree = "<group>"; };
 		68E27CBD57B722D6F6C1AE0D64A1D4C5 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		69922B9D4AD16ABF0A98B7DC195E00E8 /* RatioPieGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatioPieGraphView.swift; sourceTree = "<group>"; };
 		69FA10BD185A6A5FCCA2AA974B3CB988 /* TestXMLManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestXMLManager.swift; sourceTree = "<group>"; };
@@ -253,13 +250,13 @@
 		72A417246ABE6AC2BB1B827AC6109B4D /* TestDateFormatter+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestDateFormatter+.swift"; sourceTree = "<group>"; };
 		771A6EB50A2D651B9AEE270F6542C576 /* TestRatioPieGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRatioPieGraphView.swift; sourceTree = "<group>"; };
 		774F2C38CA5F914720DD582C86070B4F /* IntakeServiceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntakeServiceType.swift; sourceTree = "<group>"; };
-		777C1D35AE46F6691183760B1F60A130 /* RecommendCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RecommendCollectionViewCell.swift; path = FineDust/Sources/Views/RecommendCollectionViewCell.swift; sourceTree = SOURCE_ROOT; };
+		777C1D35AE46F6691183760B1F60A130 /* FeedbackRecommendationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedbackRecommendationCell.swift; path = FineDust/Sources/Views/FeedbackRecommendationCell.swift; sourceTree = SOURCE_ROOT; };
 		799E98649DD2EA94D4C69A5B8A42B492 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Statistics.storyboard; sourceTree = "<group>"; };
 		7AB47E3C0978FF98F41652103AD28A53 /* StickGraphViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StickGraphViewDataSource.swift; sourceTree = "<group>"; };
 		7B07FACC38BE06F5E09094B58CB82CD1 /* DustGrade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DustGrade.swift; sourceTree = "<group>"; };
 		7CCC24FEE510E7D01D68706187551A87 /* IntentsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IntentsUI.framework; path = System/Library/Frameworks/IntentsUI.framework; sourceTree = SDKROOT; };
 		7D853CED5F198E45684AFEF4CCFF7AD7 /* Hour.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hour.swift; sourceTree = "<group>"; };
-		7DA6C5AFF3D7FFB2C818346071FFAF50 /* FeedbackCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedbackCell.swift; path = FineDust/Sources/Views/FeedbackCell.swift; sourceTree = SOURCE_ROOT; };
+		7DA6C5AFF3D7FFB2C818346071FFAF50 /* FeedbackListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedbackListCell.swift; path = FineDust/Sources/Views/FeedbackListCell.swift; sourceTree = SOURCE_ROOT; };
 		7E71CE12221EDB0A8B8E421E855F8D01 /* Assets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
 		7E90E42B5FC282AEC368DC78BE40EAD3 /* Pods-FineDustTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FineDustTests.debug.xcconfig"; path = "Target Support Files/Pods-FineDustTests/Pods-FineDustTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81BEEAC1BBD31F0734B18B81183373E2 /* SharedInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedInfo.swift; sourceTree = "<group>"; };
@@ -324,7 +321,6 @@
 		DCFE5EB109121B4E2429575860BF1BAA /* HomeInfoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeInfoView.xib; sourceTree = "<group>"; };
 		E0BB900D39FF9585B0E16F227F301448 /* FineDust.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FineDust.entitlements; sourceTree = "<group>"; };
 		E0C26B3B0593407113C2ED88D1A6DDA6 /* DummyHealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyHealthKitService.swift; sourceTree = "<group>"; };
-		E0FDB196844CABA4DA3FC52600E12F33 /* FeedbackServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackServiceType.swift; sourceTree = "<group>"; };
 		E153A1D813F21BE9088343DDA897A22B /* GraphDrawable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphDrawable.swift; sourceTree = "<group>"; };
 		E300FC5266AAC4C506EBE53C9422703F /* RecentDustInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentDustInfo.swift; sourceTree = "<group>"; };
 		E31C4C9826AA208B5039678B0CF3E819 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -416,7 +412,7 @@
 		0FABF74BBAE2587A3D213E5DB8A0B7C1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				7DA6C5AFF3D7FFB2C818346071FFAF50 /* FeedbackCell.swift */,
+				7DA6C5AFF3D7FFB2C818346071FFAF50 /* FeedbackListCell.swift */,
 				1F2988554BE2F9C32E1E791FDF7CF149 /* HomeInfoView.swift */,
 				DCFE5EB109121B4E2429575860BF1BAA /* HomeInfoView.xib */,
 				9D3CE180CE74C6C11F1B58AEB53F2593 /* IntakeSpeechBubbleView.swift */,
@@ -427,7 +423,7 @@
 				309926C6E607D02675EBA0D3E81CD9A9 /* RatioPieGraphView.xib */,
 				D275FC2070268FAA9561BB9FAF6291A1 /* RatioStickGraphView.swift */,
 				C5C1E21F53D7194A77E5F5AEA3256903 /* RatioStickGraphView.xib */,
-				777C1D35AE46F6691183760B1F60A130 /* RecommendCollectionViewCell.swift */,
+				777C1D35AE46F6691183760B1F60A130 /* FeedbackRecommendationCell.swift */,
 				60D44A1CD7D5AEDEA52A7B5ACEC5D681 /* StickGraphView.swift */,
 				46B713365C5B8FF561BB285C8EE6CAE7 /* StickGraphView.xib */,
 			);
@@ -584,8 +580,6 @@
 				A6B908F0A804537BD7803F36EC3811DE /* Location */,
 				62B4CDEF4663F22FBF40723136CC9729 /* Parser */,
 				F879608C309C4960F566C117FB8FB1F8 /* Persistence */,
-				68A515A9A3D75446DB1DB2B643A528B6 /* FeedbackService.swift */,
-				E0FDB196844CABA4DA3FC52600E12F33 /* FeedbackServiceType.swift */,
 				53D58E33E9E16E3D19F0C2DEC6138A7F /* IntakeService.swift */,
 				774F2C38CA5F914720DD582C86070B4F /* IntakeServiceType.swift */,
 			);
@@ -991,14 +985,12 @@
 				C53FE0A788BF3B53E95E9AEF5E0BEAD8 /* DustAPIServiceType.swift in Sources */,
 				61E9422418759936F6F5F9901667B526 /* DustGrade.swift in Sources */,
 				B54B55F11F2CADE3FFCEE29C7CC764ED /* DustIntake.swift in Sources */,
-				A88FFB56BEE084C17CF57A5D5A60CC86 /* FeedbackCell.swift in Sources */,
+				A88FFB56BEE084C17CF57A5D5A60CC86 /* FeedbackListCell.swift in Sources */,
 				BAEF4D239ADAD99A885D6BF47CBE5796 /* FeedbackCellModel.swift in Sources */,
 				E919C61FD99B5D2B5ABEB5AE830587A0 /* FeedbackContents.swift in Sources */,
 				74325983AEFEC89173102C3515D51D43 /* FeedbackDetailViewController.swift in Sources */,
 				6BCC96BC6A8DC30F1EE2431867B7B21E /* FeedbackDetailViewModel.swift in Sources */,
 				DB8311B8EAC1F9EE13038C1AEB2BEBAA /* FeedbackImportance.swift in Sources */,
-				D672829B4AD9AB672B07460D15C87E37 /* FeedbackService.swift in Sources */,
-				E3466A2192E9305264FAEDFB852F9F5C /* FeedbackServiceType.swift in Sources */,
 				E43C0F33A0D1C1761796EF71AABEEBE6 /* FeedbackViewController.swift in Sources */,
 				F3857A21E45C53DB127741FDE5AC28F2 /* FeedbackViewModel.swift in Sources */,
 				E1F24F88DA1B9934D72BA5C142C5F384 /* FloatingPoint+.swift in Sources */,
@@ -1039,7 +1031,7 @@
 				FF247490686ADB14BAA2067689606D9E /* RatioPieGraphView.swift in Sources */,
 				5FE70103F3EEB6C2D9D5FEA6DE108E01 /* RatioStickGraphView.swift in Sources */,
 				22F48C429DB679A5F46BD063AEF75A0F /* RecentDustInfo.swift in Sources */,
-				F0DE044A17D2D36C806E715D10A95CB6 /* RecommendCollectionViewCell.swift in Sources */,
+				F0DE044A17D2D36C806E715D10A95CB6 /* FeedbackRecommendationCell.swift in Sources */,
 				56BF4E6D6AFAB5570866F173C2E45AFA /* SharedInfo.swift in Sources */,
 				24F4ACCB4A79BC9C89B6C27D96269A15 /* StatisticsViewController.swift in Sources */,
 				77130D858ACB8EB21C6C68BE1CFEE9FB /* StatisticsViewModel.swift in Sources */,

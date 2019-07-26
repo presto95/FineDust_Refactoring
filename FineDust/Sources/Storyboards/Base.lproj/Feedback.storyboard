@@ -24,7 +24,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <inset key="separatorInset" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="recommendTableCell" rowHeight="330" id="Fvy-Ba-Bof" customClass="RecommendTableViewCell" customModule="FineDust" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="feedbackRecommendationCell" rowHeight="330" id="Fvy-Ba-Bof">
                                         <rect key="frame" x="0.0" y="28" width="414" height="330"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Fvy-Ba-Bof" id="A4O-Xg-eb3">
@@ -41,7 +41,7 @@
                                                         <inset key="sectionInset" minX="50" minY="0.0" maxX="50" maxY="0.0"/>
                                                     </collectionViewFlowLayout>
                                                     <cells>
-                                                        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="recommendCell" id="Tva-RU-VTV" customClass="RecommendCollectionViewCell" customModule="FineDust" customModuleProvider="target">
+                                                        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="recommendCell" id="Tva-RU-VTV" customClass="FeedbackRecommendationCell" customModule="FineDust" customModuleProvider="target">
                                                             <rect key="frame" x="50" y="9" width="289" height="279.5"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -71,8 +71,8 @@
                                                                 <constraint firstAttribute="bottom" secondItem="0hZ-Mz-REd" secondAttribute="bottom" priority="999" constant="14" id="ncg-ZZ-aEU"/>
                                                             </constraints>
                                                             <connections>
-                                                                <outlet property="recommendImageView" destination="rCT-91-ej0" id="toY-UE-UbZ"/>
-                                                                <outlet property="recommendTitleLabel" destination="0hZ-Mz-REd" id="G6j-EI-F9f"/>
+                                                                <outlet property="imageView" destination="rCT-91-ej0" id="toY-UE-UbZ"/>
+                                                                <outlet property="titleLabel" destination="0hZ-Mz-REd" id="G6j-EI-F9f"/>
                                                             </connections>
                                                         </collectionViewCell>
                                                     </cells>
@@ -90,7 +90,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="feedbackListCell" rowHeight="133" id="A1f-td-iGf" customClass="FeedbackCell" customModule="FineDust" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="feedbackListCell" rowHeight="133" id="A1f-td-iGf" customClass="FeedbackListCell" customModule="FineDust" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="358" width="414" height="133"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="A1f-td-iGf" id="sZd-PZ-2PD">

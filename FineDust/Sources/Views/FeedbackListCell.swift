@@ -11,7 +11,7 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-final class FeedbackCell: UITableViewCell {
+final class FeedbackListCell: UITableViewCell {
   
   private let disposeBag = DisposeBag()
   
@@ -60,7 +60,7 @@ final class FeedbackCell: UITableViewCell {
 
 // MARK: - Private Method
 
-private extension FeedbackCell {
+private extension FeedbackListCell {
   
   func bindViewModel() {
     bookmarkButton.rx.tap.asDriver()
@@ -80,7 +80,7 @@ private extension FeedbackCell {
 
 // MARK: - Reactive Extension
 
-extension Reactive where Base: FeedbackCell {
+extension Reactive where Base: FeedbackListCell {
   
   var bookmarkButtonTapped: ControlEvent<Void> {
     return .init(events: base.viewModel.bookmarkButtonTapped)
