@@ -18,7 +18,6 @@ final class GeocodeService: GeocodeServiceType {
         .reverseGeocodeLocation(location, preferredLocale: .korea) { placemarks, error in
           if let error = error {
             observer.onError(error)
-            return
           }
           guard let placemark = placemarks?.first else { return }
           let locality = placemark.locality ?? ""

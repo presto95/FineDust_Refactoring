@@ -40,13 +40,13 @@ final class PersistenceService: PersistenceServiceType {
     dates.forEach { date in
       let intakeInCurrentDate = intakesInDates.filter { $0.date.start == date }.first
       if let currentIntake = intakeInCurrentDate {
-        dateIntakeValuePair[date] = [Int(currentIntake.fineDust), Int(currentIntake.ultraFineDust)]
+        dateIntakeValuePair[date] = .init(fineDust: Int(currentIntake.fineDust), ultraFineDust: Int(currentIntake.ultraFineDust))
       }
     }
     return dateIntakeValuePair
   }
   
-  func saveIntake(_ intake: DustIntake, at date: Date) {
+  func saveIntake(_ intake: DustPair<Int>, at date: Date) {
     let object = IntakeModel().then {
       $0.fineDust = intake.fineDust
       $0.ultraFineDust = intake.ultraFineDust
@@ -57,7 +57,7 @@ final class PersistenceService: PersistenceServiceType {
     }
   }
   
-  func saveIntakes(_ intakes: [DustIntake], at dates: [Date]) {
+  func saveIntakes(_ intakes: [DustPair<Int>], at dates: [Date]) {
     zip(intakes, dates).forEach { intakeValue, date in
       let object = IntakeModel().then {
         $0.fineDust = intakeValue.fineDust
@@ -72,17 +72,13 @@ final class PersistenceService: PersistenceServiceType {
   
   func lastSavedData() -> LastSavedData? {
     guard let user = user else { return nil }
-    let lastSavedData = LastSavedData(
-      todayFineDust: Int(user.todayFineDust),
-      todayUltraFineDust: Int(user.todayUltraFineDust),
-      distance: user.distance,
-      steps: user.steps,
-      address: user.address,
-      grade: user.grade,
-      recentFineDust: user.recentFineDust,
-      weekFineDust: Array(user.weekFineDust),
-      weekUltraFineDust: Array(user.weekUltraFineDust)
-    )
+    let lastSavedData = LastSavedData(todayDust: user.todayDust,
+                  distance: user.distance,
+                  steps: user.steps,
+                  address: user.address,
+                  grade: user.grade,
+                  recentFineDust: user.recentFineDust,
+                  weekDust: user.weekDust)
     return lastSavedData
   }
   
@@ -106,14 +102,14 @@ final class PersistenceService: PersistenceServiceType {
     }
   }
   
-  func saveLastTodayIntake(_ intake: DustIntake) {
+  func saveLastTodayIntake(_ intake: DustPair<Int>) {
     try! realm.write {
       user?.todayFineDust = intake.fineDust
       user?.todayUltraFineDust = intake.ultraFineDust
     }
   }
   
-  func saveLastWeekIntake(_ intakes: [DustIntake]) {
+  func saveLastWeekIntake(_ intakes: [DustPair<Int>]) {
     let fineDusts = intakes.map { $0.fineDust }
     let ultraFineDusts = intakes.map { $0.ultraFineDust }
     try! realm.write {

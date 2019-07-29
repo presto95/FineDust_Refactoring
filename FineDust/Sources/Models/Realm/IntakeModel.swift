@@ -17,3 +17,10 @@ final class IntakeModel: Object {
   
   dynamic var ultraFineDust: Int = 0
 }
+
+extension IntakeModel {
+  
+  var dustValue: DustPair<Int> {
+    return .init(fineDust: fineDust, ultraFineDust: ultraFineDust)
+  }
+}

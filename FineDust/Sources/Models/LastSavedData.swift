@@ -8,9 +8,7 @@
 
 struct LastSavedData {
   
-  let todayFineDust: Int
-  
-  let todayUltraFineDust: Int
+  let todayDust: DustPair<Int>
   
   let distance: Double
   
@@ -22,7 +20,5 @@ struct LastSavedData {
   
   let recentFineDust: Int
   
-  let weekFineDust: [Int]
-  
-  let weekUltraFineDust: [Int]
+  let weekDust: [DustPair<Int>]
 }

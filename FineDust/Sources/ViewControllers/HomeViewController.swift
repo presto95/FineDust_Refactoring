@@ -58,7 +58,6 @@ final class HomeViewController: UIViewController {
   }
   
   func bindViewModel() {
-    
     rx.viewWillAppear
       .distinctUntilChanged()
       .subscribe(onNext: { [weak self] _ in

@@ -31,3 +31,15 @@ final class UserModel: Object {
   
   let weekUltraFineDust: List<Int> = .init()
 }
+
+extension UserModel {
+  
+  var todayDust: DustPair<Int> {
+    return .init(fineDust: todayFineDust, ultraFineDust: todayUltraFineDust)
+  }
+  
+  var weekDust: [DustPair<Int>] {
+    return zip(weekFineDust, weekUltraFineDust)
+      .map { DustPair(fineDust: $0, ultraFineDust: $1) }
+  }
+}

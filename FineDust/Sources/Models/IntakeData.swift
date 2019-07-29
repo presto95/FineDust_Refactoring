@@ -8,13 +8,9 @@
 
 struct IntakeData {
   
-  var weekFineDust = [Int](repeating: 1, count: 7)
+  var weekDust = [DustPair<Int>](repeating: .init(fineDust: 1, ultraFineDust: 1), count: 7)
   
-  var weekUltrafineDust = [Int](repeating: 1, count: 7)
-  
-  var todayFineDust = 1
-  
-  var todayUltrafineDust = 1
+  var todayDust = DustPair(fineDust: 1, ultraFineDust: 1)
   
   mutating func reset(to intakeData: IntakeData) {
     self = intakeData

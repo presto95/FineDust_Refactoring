@@ -82,22 +82,14 @@ extension LocationManager: LocationManagerType {
       SharedInfo.shared.y = convertedCoordinate?.y ?? 0
       
       self.geocodeService.geocode(for: location)
+        .do(onNext: { address in SharedInfo.shared.address = address })
+        .withLatestFrom(self.dustAPIService.observatory())
         .subscribe(
-          onNext: { address in
-            SharedInfo.shared.address = address
-            self.dustAPIService.observatory()
-              .subscribe(
-                onNext: { response in
-                  SharedInfo.shared.observatory = response
-                  LocationObserver.shared.didSuccess.accept(Void())
-              },
-                onError: { error in
-                  LocationObserver.shared.didError.accept(error)
-              })
-              .disposed(by: self.disposeBag)
-        },
-          onError: { error in
-            LocationObserver.shared.didError.accept(error)
+          onNext: { observatory in
+            SharedInfo.shared.observatory = observatory
+            LocationObserver.shared.didSuccess.accept(Void())
+        }, onError: { error in
+          LocationObserver.shared.didError.accept(error)
         })
         .disposed(by: self.disposeBag)
     }

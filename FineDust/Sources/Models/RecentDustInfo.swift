@@ -10,13 +10,9 @@ import Foundation
 
 struct RecentDustInfo {
   
-  let fineDustValue: Int
+  let dustValue: DustPair<Int>
   
-  let ultraFineDustValue: Int
-  
-  let fineDustGrade: DustGrade
-  
-  let ultraFineDustGrade: DustGrade
+  let dustGrade: DustPair<DustGrade>
   
   let updatedTime: Date
 }

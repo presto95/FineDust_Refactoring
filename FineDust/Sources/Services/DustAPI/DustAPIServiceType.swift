@@ -16,7 +16,7 @@ protocol DustAPIServiceType: class {
   
   func recentTimeInfo() -> Observable<RecentDustInfo>
   
-  func dayInfo() -> Observable<(HourIntakePair, HourIntakePair)>
+  func dayInfo() -> Observable<DustPair<HourIntakePair>>
   
-  func dayInfo(from startDate: Date, to endDate: Date) -> Observable<(DateHourIntakePair, DateHourIntakePair)>
+  func dayInfo(from startDate: Date, to endDate: Date) -> Observable<DustPair<DateHourIntakePair>>
 }

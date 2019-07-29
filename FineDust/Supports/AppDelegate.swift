@@ -16,7 +16,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
   
   var window: UIWindow?
   
-  private let healthKitManager = HealthKitManager()
+  private let healthKitService = HealthKitService()
   
   private let persistenceService = PersistenceService()
   
@@ -41,7 +41,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     if persistenceService.lastAccessedDate() == nil {
       persistenceService.saveLastAccessedDate(.init())
     }
-    healthKitManager.requestAuthorization()
+    healthKitService.requestAuthorization()
     
     locationManager.requestAuthorization()
     
@@ -50,9 +50,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func applicationWillEnterForeground(_ application: UIApplication) {
     locationManager.startUpdatingLocation()
-    if healthKitManager.authorizationStatus == (.sharingAuthorized, .sharingAuthorized) {
-      NotificationCenter.default
-        .post(name: .healthKitAuthorizationSharingAuthorized, object: nil, userInfo: nil)
-    }
+    HealthKitObserver.shared.authorized.accept(healthKitService.isAuthorized)
   }
 }

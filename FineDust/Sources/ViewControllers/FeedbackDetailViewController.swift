@@ -9,7 +9,9 @@
 import UIKit
 
 import RxCocoa
+import RxOptional
 import RxSwift
+import RxViewController
 
 final class FeedbackDetailViewController: UIViewController {
   
@@ -35,11 +37,10 @@ final class FeedbackDetailViewController: UIViewController {
   
   @IBOutlet private weak var contentLabel: UILabel!
   
-  // MARK: - Properties
-  
-  private let feedbackListService = FeedbackService()
   var feedbackTitle: String = ""
+  
   private var dustFeedback: FeedbackContents?
+  
   private var isBookmarkedByTitle: [String: Bool] = [:]
   
   // MARK: - Life Cycle
@@ -78,6 +79,15 @@ final class FeedbackDetailViewController: UIViewController {
 private extension FeedbackDetailViewController {
   
   func bindViewModel() {
+    rx.viewWillAppear.asDriver()
+      .distinctUntilChanged()
+      .map { [weak self] _ in self?.title }
+      .filterNil()
+      .drive(onNext: { [weak self] title in
+        self?.viewModel.setTitle(title)
+      })
+      .disposed(by: disposeBag)
+    
     backButton.rx.tap.asDriver()
       .drive(onNext: { [weak self] _ in
         self?.viewModel.tapBackButton()

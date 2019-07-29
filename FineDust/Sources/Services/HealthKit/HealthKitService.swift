@@ -25,6 +25,7 @@ final class HealthKitService: HealthKitServiceType {
       && healthStore.authorizationStatus(for: distanceQuantityType) == .sharingAuthorized
   }
   
+  @discardableResult
   func requestAuthorization() -> Observable<Bool> {
     guard let stepCountQuantityType = HKObjectType.quantityType(forIdentifier: .stepCount),
       let distanceQuantityType = HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)
@@ -46,35 +47,19 @@ final class HealthKitService: HealthKitServiceType {
   }
   
   func todaySteps() -> Observable<Double> {
-    return .create { observer in
-      self.requestHealthKitData(healthKitQuery: .steps, startDate: .start(), endDate: .init(), hourInterval: 24)
-        .subscribe(
-          onNext: { value, _ in
-            observer.onNext(value)
-            observer.onCompleted()
-        },
-          onError: { error in
-            observer.onError(error)
-        })
-        .disposed(by: self.disposeBag)
-      return Disposables.create()
-    }
+    return requestHealthKitData(healthKitQuery: .steps,
+                                startDate: .start(),
+                                endDate: .init(),
+                                hourInterval: 24)
+      .map { $0.value }
   }
   
   func todayDistance() -> Observable<Double> {
-    return .create { observer in
-      self.requestHealthKitData(healthKitQuery: .distance, startDate: .start(), endDate: .init(), hourInterval: 24)
-        .subscribe(
-          onNext: { value, _ in
-            observer.onNext(value)
-            observer.onCompleted()
-        },
-          onError: { error in
-            observer.onError(error)
-        })
-        .disposed(by: self.disposeBag)
-      return Disposables.create()
-    }
+    return requestHealthKitData(healthKitQuery: .distance,
+                                startDate: .start(),
+                                endDate: .init(),
+                                hourInterval: 24)
+      .map { $0.value }
   }
   
   func todayDistancePerHour() -> Observable<HourIntakePair> {
@@ -82,7 +67,10 @@ final class HealthKitService: HealthKitServiceType {
       var hourIntakePair = HourIntakePair()
       let semaphore = DispatchSemaphore(value: 0)
       var temp = 0
-      self.requestHealthKitData(healthKitQuery: .distance, startDate: .start(), endDate: .end(), hourInterval: 1)
+      self.requestHealthKitData(healthKitQuery: .distance,
+                                startDate: .start(),
+                                endDate: .end(),
+                                hourInterval: 1)
         .subscribe(
           onNext: { value, hour in
             let value = value < 500 ? 0 : Int(value)
@@ -106,7 +94,8 @@ final class HealthKitService: HealthKitServiceType {
     }
   }
   
-  func todayDistancePerHour(from startDate: Date, to endDate: Date) -> Observable<DateHourIntakePair> {
+  func todayDistancePerHour(from startDate: Date,
+                            to endDate: Date) -> Observable<DateHourIntakePair> {
     return .create { observer in
       var hourIntakePair = HourIntakePair()
       var dateHourIntakePair = DateHourIntakePair()
@@ -119,7 +108,10 @@ final class HealthKitService: HealthKitServiceType {
       var temp = 0
       for index in 0..<day {
         let indexDate = startDate.after(days: index)
-        self.requestHealthKitData(healthKitQuery: .distance, startDate: indexDate.start, endDate: indexDate.end, hourInterval: 1)
+        self.requestHealthKitData(healthKitQuery: .distance,
+                                  startDate: indexDate.start,
+                                  endDate: indexDate.end,
+                                  hourInterval: 1)
           .subscribe(
             onNext: { value, hour in
               let value = value < 500 ? 0 : Int(value)
@@ -158,8 +150,9 @@ private extension HealthKitService {
                             endDate: Date,
                             hourInterval: Int) -> Observable<(value: Double, hour: Int)> {
     return .create { observer in
-      guard let quantityType = HKQuantityType.quantityType(forIdentifier: healthKitQuery.identifier) else {
-        observer.onError(HealthKitError.unexpectedIdentifier)
+      guard let quantityType
+        = HKQuantityType.quantityType(forIdentifier: healthKitQuery.identifier) else {
+          observer.onError(HealthKitError.unexpectedIdentifier)
       }
       let interval = DateComponents(hour: hourInterval)
       let predicate = HKQuery.predicateForSamples(withStart: startDate,

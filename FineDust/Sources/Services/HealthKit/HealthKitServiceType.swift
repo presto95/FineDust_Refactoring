@@ -22,6 +22,7 @@ protocol HealthKitServiceType: class {
   
   func todayDistancePerHour() -> Observable<HourIntakePair>
   
-  func todayDistancePerHour(from startDate: Date, to endDate: Date) -> Observable<DateHourIntakePair>
+  func todayDistancePerHour(from startDate: Date,
+                            to endDate: Date) -> Observable<DateHourIntakePair>
 }
 

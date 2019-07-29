@@ -11,9 +11,11 @@ import RxSwift
 
 protocol FeedbackDetailViewModelInputs {
   
+  func setTitle(_ title: String)
+  
   func tapBackButton()
   
-  func tapBookmarkButton()
+  func tapBookmarkButton(selected: Bool)
 }
 
 protocol FeedbackDetailViewModelOutputs {
@@ -21,22 +23,42 @@ protocol FeedbackDetailViewModelOutputs {
   var backButtonTapped: Observable<Void> { get }
   
   var bookmarkButtonTapped: Observable<Void> { get }
+  
+  var title: Observable<String> { get }
+  
+  var source: Observable<String> { get }
+  
+  var date: Observable<String> { get }
+  
+  var contents: Observable<String> { get }
+  
+  var imageName: Observable<String> { get }
 }
 
 final class FeedbackDetailViewModel {
   
+  private var bookmark: Bookmark = [:]
+  
+  private let titleRelay = PublishRelay<String>()
+  
   private let backButtonTappedRelay = PublishRelay<Void>()
   
   private let bookmarkButtonTappedRelay = PublishRelay<Void>()
+  
+  private let feedbackContentsRelay = PublishRelay<FeedbackContents>()
 }
 
 extension FeedbackDetailViewModel: FeedbackDetailViewModelInputs {
+  
+  func setTitle(_ title: String) {
+    titleRelay.accept(title)
+  }
   
   func tapBackButton() {
     backButtonTappedRelay.accept(Void())
   }
   
-  func tapBookmarkButton() {
+  func tapBookmarkButton(selected: Bool) {
     bookmarkButtonTappedRelay.accept(Void())
   }
 }
@@ -50,11 +72,33 @@ extension FeedbackDetailViewModel: FeedbackDetailViewModelOutputs {
   var bookmarkButtonTapped: Observable<Void> {
     return bookmarkButtonTappedRelay.asObservable()
   }
+  
+  var title: Observable<String> {
+    
+  }
+  
+  var source: Observable<String> {
+    
+  }
+  
+  var date: Observable<String> {
+    
+  }
+  
+  var contents: Observable<String> {
+    
+  }
+  
+  var imageName: Observable<String> {
+    
+  }
 }
 
-extension FeedbackDetailViewModel {
+// MARK: - Private Method
+
+private extension feedbackdetailviewm {
   
-  var inputs: FeedbackDetailViewModelInputs { return self }
-  
-  var outputs: FeedbackDetailViewModelOutputs { return self }
+  func fetchFeedbackContents(byTitle title: String) {
+    
+  }
 }

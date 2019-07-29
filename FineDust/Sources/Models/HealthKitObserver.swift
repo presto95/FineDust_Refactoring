@@ -14,5 +14,5 @@ final class HealthKitObserver {
   
   private init() { }
   
-  let authorized = PublishRelay<Void>()
+  let authorized = BehaviorRelay<Bool>(value: false)
 }
