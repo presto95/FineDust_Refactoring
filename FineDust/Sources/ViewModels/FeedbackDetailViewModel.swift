@@ -11,11 +11,11 @@ import RxSwift
 
 protocol FeedbackDetailViewModelInputs {
   
-  func setTitle(_ title: String)
+  func setFeedbackContents(_ feedbackContents: FeedbackContents)
   
   func tapBackButton()
   
-  func tapBookmarkButton(selected: Bool)
+  func tapBookmarkButton()
 }
 
 protocol FeedbackDetailViewModelOutputs {
@@ -33,33 +33,39 @@ protocol FeedbackDetailViewModelOutputs {
   var contents: Observable<String> { get }
   
   var imageName: Observable<String> { get }
+  
+  var isBookmarked: Observable<Bool> { get }
 }
 
 final class FeedbackDetailViewModel {
   
   private var bookmark: Bookmark = [:]
   
-  private let titleRelay = PublishRelay<String>()
-  
   private let backButtonTappedRelay = PublishRelay<Void>()
   
   private let bookmarkButtonTappedRelay = PublishRelay<Void>()
   
   private let feedbackContentsRelay = PublishRelay<FeedbackContents>()
+  
+  private let isBookmarkedRelay = BehaviorRelay<Bool>(value: false)
 }
 
 extension FeedbackDetailViewModel: FeedbackDetailViewModelInputs {
   
-  func setTitle(_ title: String) {
-    titleRelay.accept(title)
+  func setFeedbackContents(_ feedbackContents: FeedbackContents) {
+    feedbackContentsRelay.accept(feedbackContents)
+    let bookmark = fetchBookmark()
+    let isBookmarked = bookmark[feedbackContents.title] ?? false
+    isBookmarkedRelay.accept(isBookmarked)
   }
   
   func tapBackButton() {
     backButtonTappedRelay.accept(Void())
   }
   
-  func tapBookmarkButton(selected: Bool) {
+  func tapBookmarkButton() {
     bookmarkButtonTappedRelay.accept(Void())
+    isBookmarkedRelay.accept(!isBookmarkedRelay.value)
   }
 }
 
@@ -74,31 +80,46 @@ extension FeedbackDetailViewModel: FeedbackDetailViewModelOutputs {
   }
   
   var title: Observable<String> {
-    
+    return feedbackContentsRelay.asObservable()
+      .map { $0.title }
   }
   
   var source: Observable<String> {
-    
+    return feedbackContentsRelay.asObservable()
+      .map { $0.source }
   }
   
   var date: Observable<String> {
-    
+    return feedbackContentsRelay.asObservable()
+      .map { $0.date }
   }
   
   var contents: Observable<String> {
-    
+    return feedbackContentsRelay.asObservable()
+      .map { $0.contents }
   }
   
   var imageName: Observable<String> {
-    
+    return feedbackContentsRelay.asObservable()
+      .map { $0.imageName }
+  }
+  
+  var isBookmarked: Observable<Bool> {
+    return isBookmarkedRelay.asObservable()
   }
 }
 
 // MARK: - Private Method
 
-private extension feedbackdetailviewm {
+private extension FeedbackDetailViewModel {
   
-  func fetchFeedbackContents(byTitle title: String) {
-    
+  func fetchBookmark() -> Bookmark {
+    return UserDefaults.standard.dictionary(forKey: "bookmark") as? Bookmark ?? [:]
+  }
+  
+  func saveBookmark(byTitle title: String, bookmarked: Bool) {
+    var bookmark = UserDefaults.standard.dictionary(forKey: "bookmark") as? Bookmark ?? [:]
+    bookmark[title] = bookmarked
+    UserDefaults.standard.set(bookmark, forKey: "bookmark")
   }
 }

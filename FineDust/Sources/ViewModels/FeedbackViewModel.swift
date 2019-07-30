@@ -33,6 +33,8 @@ protocol FeedbackViewModelOutputs {
   var sortByBookmarkButtonTapped: Observable<Void> { get }
   
   var feedbackContents: Observable<[FeedbackContents]> { get }
+  
+  var dataSource: Observable<[FeedbackSectionModel]> { get }
 }
 
 final class FeedbackViewModel {
@@ -115,6 +117,10 @@ extension FeedbackViewModel: FeedbackViewModelOutputs {
   
   var feedbackContents: Observable<[FeedbackContents]> {
     return feedbackContentsRelay.asObservable()
+  }
+  
+  var dataSource: Observable<[FeedbackSectionModel]> {
+    return .empty()
   }
 }
 

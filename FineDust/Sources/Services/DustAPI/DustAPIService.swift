@@ -22,7 +22,7 @@ final class DustAPIService: DustAPIServiceType {
   
   func observatory() -> Observable<String> {
     return .create { observer in
-      self.provider.request(.observatory) { result in
+      let task = self.provider.request(.observatory) { result in
         switch result {
         case let .success(response):
           do {
@@ -37,23 +37,27 @@ final class DustAPIService: DustAPIServiceType {
           observer.onError(error)
         }
       }
-      return Disposables.create()
+      return Disposables.create { task.cancel() }
     }
   }
   
   func recentTimeInfo() -> Observable<RecentDustInfo> {
     return .create { observer in
-      self.provider.request(.recentTimeInfo) { result in
+      let task = self.provider.request(.recentTimeInfo) { result in
         switch result {
         case let .success(response):
           do {
             let decoded = try self.validate(response, to: DustAPIInfoResponse.self)
             guard let recentResponse = decoded.items.first else { return }
             let dustInfo = RecentDustInfo(
-              dustValue: .init(fineDust: recentResponse.fineDustValue,
-                               ultraFineDust: recentResponse.ultrafineDustValue),
-              dustGrade: .init(fineDust: DustGrade(rawValue: recentResponse.fineDustGrade) ?? .default,
-                               ultraFineDust: DustGrade(rawValue: recentResponse.ultrafineDustGrade) ?? .default),
+              dustValue: .init(
+                fineDust: recentResponse.fineDustValue,
+                ultraFineDust: recentResponse.ultraFineDustValue
+              ),
+              dustGrade: .init(
+                fineDust: DustGrade(rawValue: recentResponse.fineDustGrade) ?? .default,
+                ultraFineDust: DustGrade(rawValue: recentResponse.ultraFineDustGrade) ?? .default
+              ),
               updatedTime: DateFormatter.dateTime.date(from: recentResponse.dataTime) ?? Date()
             )
             observer.onNext(dustInfo)
@@ -65,13 +69,13 @@ final class DustAPIService: DustAPIServiceType {
           observer.onError(error)
         }
       }
-      return Disposables.create()
+      return Disposables.create { task.cancel() }
     }
   }
   
   func dayInfo() -> Observable<DustPair<HourIntakePair>> {
     return .create { observer in
-      self.provider.request(.dayInfo) { result in
+      let task = self.provider.request(.dayInfo) { result in
         switch result {
         case let .success(response):
           do {
@@ -82,7 +86,7 @@ final class DustAPIService: DustAPIServiceType {
             for item in items {
               let (hour, isMidnight) = self.hourInDustDate(item.dataTime)
               hourlyFineDustIntake[hour] = item.fineDustValue
-              hourlyUltraFineDustIntake[hour] = item.ultrafineDustValue
+              hourlyUltraFineDustIntake[hour] = item.ultraFineDustValue
               if isMidnight { break }
             }
             hourlyFineDustIntake.padIfHourIsNotFilled()
@@ -97,13 +101,13 @@ final class DustAPIService: DustAPIServiceType {
           observer.onError(error)
         }
       }
-      return Disposables.create()
+      return Disposables.create { task.cancel() }
     }
   }
   
   func dayInfo(from startDate: Date, to endDate: Date) -> Observable<DustPair<DateHourIntakePair>> {
     return .create { observer in
-      self.provider.request(.daysInfo(startDate: startDate, endDate: endDate)) { result in
+      let task = self.provider.request(.daysInfo(startDate: startDate, endDate: endDate)) { result in
         switch result {
         case let .success(response):
           do {
@@ -118,14 +122,16 @@ final class DustAPIService: DustAPIServiceType {
               if !(startDate.start...endDate.start).contains(currentReferenceDate) { continue }
               // 시작 날짜의 전날 시작 날짜와 현재 요소의 시작 날짜가 같으면 필요한 처리를 다 한 것이므로 브레이크
               if startDate.before(days: 1).start == currentReferenceDate { break }
-              hourlyFineDustIntakePerDate
-                .padIntakeOrEmpty(date: currentReferenceDate,
-                                  hour: hour,
-                                  intake: item.fineDustValue)
-              hourlyUltraFineDustIntakePerDate
-                .padIntakeOrEmpty(date: currentReferenceDate,
-                                  hour: hour,
-                                  intake: item.ultrafineDustValue)
+              hourlyFineDustIntakePerDate.padIntakeOrEmpty(
+                date: currentReferenceDate,
+                hour: hour,
+                intake: item.fineDustValue
+              )
+              hourlyUltraFineDustIntakePerDate.padIntakeOrEmpty(
+                date: currentReferenceDate,
+                hour: hour,
+                intake: item.ultraFineDustValue
+              )
             }
             observer.onNext(.init(fineDust: hourlyFineDustIntakePerDate,
                                   ultraFineDust: hourlyUltraFineDustIntakePerDate))
@@ -136,7 +142,7 @@ final class DustAPIService: DustAPIServiceType {
           observer.onError(error)
         }
       }
-      return Disposables.create()
+      return Disposables.create { task.cancel() }
     }
   }
 }
@@ -146,17 +152,14 @@ final class DustAPIService: DustAPIServiceType {
 private extension DustAPIService {
   
   func validate<T>(_ response: Response, to type: T.Type) throws -> T where T: XMLIndexerDeserializable {
-    let statusCode = response.statusCode
-    if statusCode == 200 {
-      let data = response.data
+    if response.statusCode == 200 {
       do {
-        let decoded = try xmlParser.decodeData(data, to: T.self)
-        return decoded
+        return try xmlParser.decodeData(response.data, to: T.self)
       } catch {
         throw error
       }
     } else {
-      throw NSError(domain: "", code: 0, userInfo: nil)
+      throw MoyaError.statusCode(response)
     }
   }
   

@@ -15,15 +15,24 @@ import RxViewController
 
 final class FeedbackViewController: UIViewController {
   
+  private enum Section {
+    
+    static let recommendation = 0
+    
+    static let list = 1
+  }
+  
+  typealias DataSoruce = RxTableViewSectionedReloadDataSource<FeedbackSectionModel>
+  
   private let disposeBag = DisposeBag()
   
   fileprivate let viewModel = FeedbackViewModel()
   
   @IBOutlet private weak var tableView: UITableView!
   
-  private let reuseIdentifiers = ["feedbackRecommendationCell", "feedbackListCell"]
+  private var dataSource: DataSoruce!
   
-  private var feedbackCount = 0
+  private let reuseIdentifiers = ["feedbackRecommendationCell", "feedbackListCell"]
   
   private var newDustFeedbacks: [FeedbackContents]?
   
@@ -41,8 +50,29 @@ final class FeedbackViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    dataSource = .init(configureCell: { [weak self] dataSouce, tableView, indexPath, feedbackItem in
+      guard let self = self else { return UITableViewCell() }
+      let cell = tableView.dequeueReusableCell(withIdentifier: self.reuseIdentifiers[indexPath.section], for: indexPath)
+      switch indexPath.section {
+      case Section.recommendation:
+        let recommendationCell = cell as? FeedbackRecommendationSectionCell
+        recommendationCell?.rx.itemSelected
+          .withLatestFrom(self.viewModel.feedbackContents) { indexPath, feedbackContents in
+            feedbackContents[indexPath.section]
+          }
+          .subscribe(onNext: { feedbackContents in
+            self.pushDetailViewController(feedbackContents)
+          })
+          .disposed(by: self.disposeBag)
+      case Section.list:
+        let listCell = cell as? FeedbackListCell
+      default:
+        break
+      }
+      return cell
+    })
     bindViewModel()
-    setup()
+    navigationController?.interactivePopGestureRecognizer?.delegate = nil
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -88,12 +118,33 @@ private extension FeedbackViewController {
         self?.tableView.reloadSections(.init(integer: 1), with: .automatic)
       })
       .disposed(by: disposeBag)
+    
+    viewModel.dataSource
+      .bind(to: tableView.rx.items(dataSource: dataSource))
+      .disposed(by: disposeBag)
+    
+    tableView.rx.itemSelected
+      .withLatestFrom(viewModel.feedbackContents) { indexPath, feedbackContents in
+        feedbackContents[indexPath.row]
+      }
+      .subscribe(onNext: { feedbackContents in
+        self.pushDetailViewController(feedbackContents)
+      })
+      .disposed(by: disposeBag)
+    
+    tableView.rx.setDelegate(self)
+      .disposed(by: disposeBag)
   }
+
   
-  func setup() {
-    feedbackCount = feedbackListService.fetchFeedbackCount()
-    navigationController?.interactivePopGestureRecognizer?.delegate = nil
+  func pushDetailViewController(_ feedbackContents: FeedbackContents) {
+    guard let detailViewController = storyboard?
+      .instantiateViewController(withIdentifier: FeedbackDetailViewController.classNameToString)
+      as? FeedbackDetailViewController else { return }
+    detailViewController.feedbackContents = feedbackContents
+    navigationController?.pushViewController(detailViewController, animated: true)
   }
+
   
   func presentSettingActionSheet() {
     UIAlertController
@@ -130,66 +181,35 @@ private extension FeedbackViewController {
       currentState = IntakeGrade(intake: totalIntake)
     }
   }
-  
-  func pushDetailViewController(title: String) {
-    guard let detailViewController = storyboard?
-      .instantiateViewController(withIdentifier: FeedbackDetailViewController.classNameToString)
-      as? FeedbackDetailViewController else { return }
-    detailViewController.feedbackTitle = title
-    navigationController?.pushViewController(detailViewController, animated: true)
-  }
 }
 
 // MARK: - Implement UITabelViewDataSource
 
-extension FeedbackViewController: UITableViewDataSource {
-  
-  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    guard let cell = tableView
-      .dequeueReusableCell(withIdentifier: reuseIdentifiers[indexPath.section], for: indexPath)
-      as? FeedbackListCell else { return UITableViewCell() }
-    
-    if let newDustFeedbacks = newDustFeedbacks {
-      cell.configure(with: newDustFeedbacks[indexPath.row])
-    } else {
-      let feedback = feedbackListService.fetchFeedbacksByBookmark()
-      cell.configure(with: feedback[indexPath.row])
-    }
-    cell.setBookmarkButtonState(isBookmarkedByTitle: isBookmarkedByTitle)
-    return cell
-  }
-  
-  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return section == 0 ? 1 : feedbackCount
-  }
-  
-  func numberOfSections(in tableView: UITableView) -> Int {
-    return 2
-  }
-}
+//extension FeedbackViewController: UITableViewDataSource {
+//
+//  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//    guard let cell = tableView
+//      .dequeueReusableCell(withIdentifier: reuseIdentifiers[indexPath.section], for: indexPath)
+//      as? FeedbackListCell else { return UITableViewCell() }
+//    if let newDustFeedbacks = newDustFeedbacks {
+//      cell.configure(with: newDustFeedbacks[indexPath.row])
+//    } else {
+//      let feedback = feedbackListService.fetchFeedbacksByBookmark()
+//      cell.configure(with: feedback[indexPath.row])
+//    }
+//    cell.setBookmarkButtonState(isBookmarkedByTitle: isBookmarkedByTitle)
+//    return cell
+//  }
+//}
 
 // MARK: - Implement UITableViewDelegate
 
 extension FeedbackViewController: UITableViewDelegate {
   
-  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    return indexPath.section == 0 ? 330 : UITableView.automaticDimension
-  }
-  
-  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    tableView.deselectRow(at: indexPath, animated: true)
-    guard let currentCell = tableView.cellForRow(at: indexPath)
-      as? FeedbackListCell else { return }
-    pushDetailViewController(title: currentCell.title)
-  }
-  
   func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-    let headerView = UIView(frame: .init(x: 0,
-                                         y: 0,
-                                         width: view.bounds.width,
-                                         height: 60))
-    headerView.backgroundColor = .init(white: 1, alpha: 0.7)
-    
+    let headerView = UIView(frame: .init(x: 0, y: 0, width: view.bounds.width, height: 60)).then {
+      $0.backgroundColor = .init(white: 1, alpha: 0.7)
+    }
     let headerLabel = UILabel().then {
       $0.textColor = .darkGray
       $0.font = .systemFont(ofSize: $0.font.pointSize, weight: .bold)
@@ -220,45 +240,15 @@ extension FeedbackViewController: UITableViewDelegate {
     return headerView
   }
   
+  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    return indexPath.section == 0 ? 330 : UITableView.automaticDimension
+  }
+  
   func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
     return 40
   }
 }
 
-// MARK: - Implement UICollectionViewDataSource
-
-extension FeedbackViewController: UICollectionViewDataSource {
-  
-  func collectionView(_ collectionView: UICollectionView,
-                      cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-    
-    guard let cell = collectionView
-      .dequeueReusableCell(withReuseIdentifier: "recommendCell",
-                           for: indexPath) as? FeedbackRecommendationCell
-      else { return UICollectionViewCell() }
-    
-    let feedback = recommendFeedbacks[indexPath.item]
-    cell.configure(with: feedback)
-    return cell
-  }
-  
-  func collectionView(_ collectionView: UICollectionView,
-                      numberOfItemsInSection section: Int) -> Int {
-    return recommendFeedbacks.count
-  }
-}
-
-// MARK: - Implement UICollectionViewDelegate
-
-extension FeedbackViewController: UICollectionViewDelegate {
-  
-  func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    collectionView.deselectItem(at: indexPath, animated: true)
-    guard let currentCell = collectionView.cellForItem(at: indexPath)
-      as? FeedbackRecommendationCell else { return }
-    pushDetailViewController(title: currentCell.title)
-  }
-}
 
 // MARK: - FeedbackListCellDelegate
 

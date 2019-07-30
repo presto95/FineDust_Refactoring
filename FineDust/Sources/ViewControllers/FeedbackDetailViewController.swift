@@ -35,42 +35,16 @@ final class FeedbackDetailViewController: UIViewController {
   
   @IBOutlet private weak var dateLabel: UILabel!
   
-  @IBOutlet private weak var contentLabel: UILabel!
+  @IBOutlet private weak var contentsLabel: UILabel!
   
-  var feedbackTitle: String = ""
-  
-  private var dustFeedback: FeedbackContents?
-  
-  private var isBookmarkedByTitle: [String: Bool] = [:]
+  var feedbackContents: FeedbackContents?
   
   // MARK: - Life Cycle
   
   override func viewDidLoad() {
     super.viewDidLoad()
     bindViewModel()
-    
     imageScrollView.delegate = self
-    
-    isBookmarkedByTitle
-      = UserDefaults.standard.dictionary(forKey: "isBookmarkedByTitle") as? [String: Bool] ?? [:]
-    
-    if let dustFeedback = feedbackListService.fetchFeedback(by: feedbackTitle) {
-      setFeedback(dustFeedback)
-    }
-  }
-  
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    isBookmarkedByTitle = feedbackListService.isBookmarkedByTitle
-    setBookmarkButtonState(isBookmarkedByTitle: isBookmarkedByTitle)
-  }
-  
-  /// 북마크 버튼 이미지 설정
-  func setBookmarkButtonState(isBookmarkedByTitle: [String: Bool]) {
-    let isBookmarked = isBookmarkedByTitle[feedbackTitle] ?? false
-    bookmarkButton.imageView?.image
-      = isBookmarked ? Asset.yellowStar.image : Asset.starOutline.image
-    bookmarkButton.isSelected = isBookmarked
   }
 }
 
@@ -81,10 +55,10 @@ private extension FeedbackDetailViewController {
   func bindViewModel() {
     rx.viewWillAppear.asDriver()
       .distinctUntilChanged()
-      .map { [weak self] _ in self?.title }
+      .map { [weak self] _ in self?.feedbackContents }
       .filterNil()
-      .drive(onNext: { [weak self] title in
-        self?.viewModel.setTitle(title)
+      .drive(onNext: { [weak self] feedbackContents in
+        self?.viewModel.setFeedbackContents(feedbackContents)
       })
       .disposed(by: disposeBag)
     
@@ -108,26 +82,31 @@ private extension FeedbackDetailViewController {
     
     viewModel.bookmarkButtonTapped.asDriver(onErrorJustReturn: Void())
       .drive(onNext: { [weak self] _ in
-        guard let self = self else { return }
-        self.bookmarkButton.isSelected.toggle()
-        if self.bookmarkButton.isSelected {
-          self.isBookmarkedByTitle[self.feedbackTitle] = true
-          self.feedbackListService.saveBookmark(by: self.feedbackTitle)
-        } else {
-          self.isBookmarkedByTitle[self.feedbackTitle] = false
-          self.feedbackListService.deleteBookmark(by: self.feedbackTitle)
-        }
+        self?.bookmarkButton.isSelected.toggle()
       })
       .disposed(by: disposeBag)
-  }
-  
-  func setFeedback(_ feedbackContents: FeedbackContents) {
-    titleLabel.text = feedbackContents.title
-    sourceLabel.text = feedbackContents.source
-    dateLabel.text = feedbackContents.date
-    contentLabel.text = feedbackContents.contents
-    imageView.image = UIImage(named: feedbackContents.imageName)?
-      .resize(newWidth: UIScreen.main.bounds.width)
+    
+    viewModel.title
+      .bind(to: titleLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    viewModel.source
+      .bind(to: sourceLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    viewModel.date
+      .bind(to: dateLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    viewModel.imageName
+      .map { UIImage(named: $0) }
+      .map { $0?.resize(newWidth: UIScreen.main.bounds.width) }
+      .bind(to: imageView.rx.image)
+      .disposed(by: disposeBag)
+    
+    viewModel.contents
+      .bind(to: contentsLabel.rx.text)
+      .disposed(by: disposeBag)
   }
 }
 

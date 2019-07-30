@@ -8,10 +8,6 @@
 
 enum HealthKitError: Error {
   
-  /// HealthKitManager의 파라미터 값들이 .stepCount - .count() 와
-  /// .distanceWalkingRunning - .meter() 짝으로 오지 않을때 에러.
-  case argumentsNotMatched
-  
   /// HealthKitManager의 indentifier 인자 값이 예상치 못한 값이 들어올때의 에러.
   case unexpectedIdentifier
   
@@ -32,8 +28,6 @@ extension HealthKitError {
   
   var localizedDescription: String {
     switch self {
-    case .argumentsNotMatched:
-      return "알 수 없는 오류 발생"
     case .unexpectedIdentifier:
       return "알 수 없는 오류 발생"
     case .invalidQuery:

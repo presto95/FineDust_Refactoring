@@ -7,16 +7,29 @@
 //
 
 import NotificationBannerSwift
+import RxCocoa
+import RxSwift
 
 protocol BannerType {
   
-  static func show(title: String?, subtitle: String?, style: BannerStyle)
+  func show(title: String?, subtitle: String?, style: BannerStyle)
 }
 
 final class Banner: BannerType {
   
-  static func show(title: String?, subtitle: String? = nil, style: BannerStyle = .success) {
+  func show(title: String?, subtitle: String? = nil, style: BannerStyle = .success) {
     let notificationBanner = NotificationBanner(title: title, subtitle: subtitle, style: style)
     notificationBanner.show()
+  }
+}
+
+// MARK: - Reactive Extension
+
+extension Reactive where Base: Banner {
+  
+  func show(title: String?, subtitle: String? = nil, style: BannerStyle = .success) -> Binder<Void> {
+    return .init(base) { target, _ in
+      target.show(title: title, subtitle: subtitle, style: style)
+    }
   }
 }

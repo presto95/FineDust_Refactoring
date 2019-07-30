@@ -30,12 +30,21 @@ struct DustAPIInfoResponse: DustAPIResponseType {
       return Int(fineDustGradeString) ?? 0
     }
     
-    var ultrafineDustValue: Int {
+    var ultraFineDustValue: Int {
       return Int(ultraFineDustValueString) ?? 0
     }
     
-    var ultrafineDustGrade: Int {
+    var ultraFineDustGrade: Int {
       return Int(ultraFineDustGradeString) ?? 0
+    }
+    
+    var dustValue: DustPair<Int> {
+      return .init(fineDust: fineDustValue, ultraFineDust: ultraFineDustValue)
+    }
+    
+    var dustGrade: DustPair<DustGrade> {
+      return .init(fineDust: DustGrade(rawValue: fineDustGrade) ?? .default,
+                   ultraFineDust: DustGrade(rawValue: ultraFineDustGrade) ?? .default)
     }
     
     static func deserialize(_ node: XMLIndexer) throws -> Item {

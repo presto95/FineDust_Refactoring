@@ -25,7 +25,7 @@ protocol IntakeSpeechBubbleViewModelOutputs {
 
 final class IntakeSpeechBubbleViewModel {
   
-  private let dustTypeRelay =  BehaviorRelay<IntakeSpeechBubbleView.DustType>(value: .fineDust)
+  private let dustTypeRelay = BehaviorRelay<IntakeSpeechBubbleView.DustType>(value: .fineDust)
   
   private let valueRelay = BehaviorRelay<Int>(value: 0)
 }

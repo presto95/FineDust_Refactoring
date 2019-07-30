@@ -24,7 +24,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <inset key="separatorInset" minX="20" minY="0.0" maxX="20" maxY="0.0"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="feedbackRecommendationCell" rowHeight="330" id="Fvy-Ba-Bof">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="feedbackRecommendationCell" rowHeight="330" id="Fvy-Ba-Bof" customClass="FeedbackRecommendationSectionCell" customModule="FineDust" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="330"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Fvy-Ba-Bof" id="A4O-Xg-eb3">
@@ -76,10 +76,6 @@
                                                             </connections>
                                                         </collectionViewCell>
                                                     </cells>
-                                                    <connections>
-                                                        <outlet property="dataSource" destination="SJf-BD-jk7" id="JWY-Ca-diZ"/>
-                                                        <outlet property="delegate" destination="SJf-BD-jk7" id="5ZG-TL-BaG"/>
-                                                    </connections>
                                                 </collectionView>
                                             </subviews>
                                             <constraints>
@@ -89,6 +85,9 @@
                                                 <constraint firstItem="msG-Ue-EPf" firstAttribute="top" secondItem="A4O-Xg-eb3" secondAttribute="top" constant="16" id="y4q-SJ-22k"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="collectionView" destination="msG-Ue-EPf" id="hf7-mA-Zob"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="feedbackListCell" rowHeight="133" id="A1f-td-iGf" customClass="FeedbackListCell" customModule="FineDust" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="358" width="414" height="133"/>
@@ -334,7 +333,7 @@
                     <connections>
                         <outlet property="backButton" destination="yTb-dR-oJf" id="vO3-c2-bx1"/>
                         <outlet property="bookmarkButton" destination="d3L-Mg-Sz1" id="FK1-06-8QI"/>
-                        <outlet property="contentLabel" destination="K5Z-ba-YyD" id="INB-w3-hBv"/>
+                        <outlet property="contentsLabel" destination="K5Z-ba-YyD" id="INB-w3-hBv"/>
                         <outlet property="dateLabel" destination="jrq-jb-ZcU" id="kLb-1k-bMj"/>
                         <outlet property="imageScrollView" destination="QKM-YB-ysn" id="9Ii-Dq-4iE"/>
                         <outlet property="imageView" destination="AXq-ts-j2Z" id="Q3p-lL-f6B"/>

@@ -81,7 +81,7 @@ extension DustAPI: TargetType {
     return .requestPlain
   }
   
-  var headers: [String : String]? {
+  var headers: [String: String]? {
     return nil
   }
 }

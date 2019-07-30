@@ -27,10 +27,6 @@ final class FeedbackListCell: UITableViewCell {
   
   @IBOutlet private weak var bookmarkButton: UIButton!
   
-  var title: String {
-    return titleLabel.text ?? ""
-  }
-  
   override func awakeFromNib() {
     super.awakeFromNib()
     bindViewModel()

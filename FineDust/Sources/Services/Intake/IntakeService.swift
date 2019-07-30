@@ -221,9 +221,9 @@ private extension IntakeService {
     let sortedUltraFineDust = hourlyDustIntake.ultraFineDust.sort().map { $0.value }
     let sortedDistance = hourlyDistance.sort().map { $0.value }
     let fineDust = zip(sortedFineDust, sortedDistance)
-      .reduce(0, { $0 + intakePerHour(dust: $1.0, distance: $1.1) })
+      .reduce(0) { $0 + intakePerHour(dust: $1.0, distance: $1.1) }
     let ultraFineDust = zip(sortedUltraFineDust, sortedDistance)
-      .reduce(0, { $0 + intakePerHour(dust: $1.0, distance: $1.1) })
+      .reduce(0) { $0 + intakePerHour(dust: $1.0, distance: $1.1) }
     return .init(fineDust: fineDust, ultraFineDust: ultraFineDust)
   }
   
@@ -240,7 +240,7 @@ private extension IntakeService {
       let sortedHourlyFineDustIntake = hourlyFineDustIntakePerDate.value.sort()
       let sortedHourlyDistance = hourlyDistancePerDate.value.sort()
       let intake = zip(sortedHourlyFineDustIntake, sortedHourlyDistance)
-        .reduce(0, { $0 + intakePerHour(dust: $1.0.value, distance: $1.1.value) })
+        .reduce(0) { $0 + intakePerHour(dust: $1.0.value, distance: $1.1.value) }
       fineDusts.append(intake)
     }
     zip(sortedHourlyUltrafineDustIntakePerDate, sortedHourlyDistancePerDate).forEach {
@@ -248,7 +248,7 @@ private extension IntakeService {
       let sortedHourlyUltrafineDustIntake = hourlyUltrafineDustIntakePerDate.value.sort()
       let sortedHourlyDistance = hourlyDistancePerDate.value.sort()
       let intake = zip(sortedHourlyUltrafineDustIntake, sortedHourlyDistance)
-        .reduce(0, { $0 + intakePerHour(dust: $1.0.value, distance: $1.1.value) })
+        .reduce(0) { $0 + intakePerHour(dust: $1.0.value, distance: $1.1.value) }
       ultrafineDusts.append(intake)
     }
     return .init(fineDust: fineDusts, ultraFineDust: ultrafineDusts)
