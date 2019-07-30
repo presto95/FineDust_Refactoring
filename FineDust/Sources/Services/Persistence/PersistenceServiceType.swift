@@ -14,7 +14,7 @@ protocol PersistenceServiceType: class {
   
   func saveLastAccessedDate(_ date: Date)
   
-  func intakes(from startDate: Date, to endDate: Date) -> DateIntakeValuePair
+  func intakes(from startDate: Date, to endDate: Date) -> [Date: DustPair<Int>]
   
   func saveIntake(_ intake: DustPair<Int>, at date: Date)
   

@@ -33,7 +33,7 @@ extension Dictionary where Key == Date {
   }
 }
 
-extension Dictionary where Key == Date, Value == HourIntakePair {
+extension Dictionary where Key == Date, Value == [Hour: Int] {
   
   mutating func padIntakeOrEmpty(date: Date, hour: Hour, intake: Int) {
     if self[date] == nil {

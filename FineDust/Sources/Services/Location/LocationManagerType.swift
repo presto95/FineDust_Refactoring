@@ -11,13 +11,7 @@ import CoreLocation
 protocol LocationManagerType: class {
   
   var authorizationStatus: CLAuthorizationStatus { get }
-  
-  var authorizationDidChange: ((CLAuthorizationStatus) -> Void)? { get }
-  
-  var locationDidUpdate: ((CLLocation?) -> Void)? { get }
-  
-  var errorHandler: ((Error) -> Void)? { get }
-  
+    
   func requestAuthorization()
   
   func startUpdatingLocation()

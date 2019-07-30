@@ -151,7 +151,8 @@ final class DustAPIService: DustAPIServiceType {
 
 private extension DustAPIService {
   
-  func validate<T>(_ response: Response, to type: T.Type) throws -> T where T: XMLIndexerDeserializable {
+  func validate<T>(_ response: Response,
+                   to type: T.Type) throws -> T where T: XMLIndexerDeserializable {
     if response.statusCode == 200 {
       do {
         return try xmlParser.decodeData(response.data, to: T.self)

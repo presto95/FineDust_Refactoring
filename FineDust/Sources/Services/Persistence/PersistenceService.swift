@@ -33,14 +33,15 @@ final class PersistenceService: PersistenceServiceType {
     }
   }
   
-  func intakes(from startDate: Date, to endDate: Date) -> DateIntakeValuePair {
-    var dateIntakeValuePair = DateIntakeValuePair()
+  func intakes(from startDate: Date, to endDate: Date) -> [Date: DustPair<Int>] {
+    var dateIntakeValuePair = [Date: DustPair<Int>]()
     let dates = Date.between(startDate.start, endDate.end)
     let intakesInDates = Array(intakes.filter { (startDate...endDate).contains($0.date) })
     dates.forEach { date in
       let intakeInCurrentDate = intakesInDates.filter { $0.date.start == date }.first
       if let currentIntake = intakeInCurrentDate {
-        dateIntakeValuePair[date] = .init(fineDust: Int(currentIntake.fineDust), ultraFineDust: Int(currentIntake.ultraFineDust))
+        dateIntakeValuePair[date] = .init(fineDust: Int(currentIntake.fineDust),
+                                          ultraFineDust: Int(currentIntake.ultraFineDust))
       }
     }
     return dateIntakeValuePair

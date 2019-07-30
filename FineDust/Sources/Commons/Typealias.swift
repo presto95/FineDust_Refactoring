@@ -6,12 +6,4 @@
 //  Copyright © 2019 boostcamp3rd. All rights reserved.
 //
 
-import Foundation
-
-typealias HourIntakePair = [Hour: Int]
-
-typealias DateHourIntakePair = [Date: HourIntakePair]
-
-typealias DateIntakeValuePair = [Date: DustPair<Int>]
-
 typealias Bookmark = [String: Bool]

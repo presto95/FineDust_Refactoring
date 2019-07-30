@@ -9,7 +9,6 @@
 import Foundation
 
 import RxSwift
-import SWXMLHash
 
 final class IntakeService: IntakeServiceType {
   
@@ -29,182 +28,71 @@ final class IntakeService: IntakeServiceType {
     self.persistenceService = persistenceService
   }
   
-  func requestTodayIntake() -> Observable<DustPair<Int>> {
+  func todayIntake() -> Observable<DustPair<Int>> {
     if !self.healthKitService.isAuthorized {
       return .error(HealthKitError.notAuthorized)
     }
-    return Observable
-      .zip(self.dustAPIService.dayInfo(),
-           self.healthKitService.todayDistancePerHour()) { hourlyDustIntake, hourlyDistance in
-            self.totalHourlyIntake(hourlyDustIntake, hourlyDistance)
+    return Observable.zip(dustAPIService.dayInfo(), healthKitService.todayDistancePerHour()) {
+      self.totalHourlyIntake($0, $1)
     }
   }
   
-  func requestIntakesInWeek() -> Observable<[DustPair<Int>]> {
-    let startDate = Date.before(days: 6)
-    let endDate = Date.before(days: 1)
-    let savedIntakePerDate = persistenceService.intakes(from: startDate, to: endDate)
-    var fineDustIntakePerDate: [Date: Int] = [:]
-    var ultrafineDustIntakePerDate: [Date: Int] = [:]
-    let dates = Date.between(startDate, endDate)
-    for date in dates {
-      guard let savedIntake = savedIntakePerDate[date] else {
-        Observable.zip(self.dustAPIService.dayInfo(from: date, to: endDate), self.healthKitService.todayDistancePerHour(from: date, to: endDate)) { hourlyDustIntakePerDate, hourlyDistancePerDate in
-          <#code#>
-        }
-      }
+  func weekIntake() -> Observable<[DustPair<Int>]> {
+    if !self.healthKitService.isAuthorized {
+      return .error(HealthKitError.notAuthorized)
     }
-  }
-  
-  func requestIntakesInWeek(completion: @escaping ([Int]?, [Int]?, Error?) -> Void) {
-    let startDate = Date.before(days: 6)
-    let endDate = Date.before(days: 1)
-    let coreDataIntakePerDate = persistenceService.intakes(from: startDate, to: endDate)
-    var fineDustIntakePerDate: [Date: Int] = [:]
-    var ultrafineDustIntakePerDate: [Date: Int] = [:]
-    let dates = Date.between(startDate, endDate)
-    for date in dates {
-      guard let savedIntake = coreDataIntakePerDate[date] else {
-        self.dustInfoService
-          .requestDayInfo(
-            from: date,
-            to: endDate
-          ) { [weak self] hourlyFineDustIntakePerDate, hourlyUltrafineDustIntakePerDate, error in
-            if let error = error {
-              completion(nil, nil, error)
-              return
-            }
-            guard let self = self,
-              let hourlyFineDustIntakePerDate = hourlyFineDustIntakePerDate,
-              let hourlyUltrafineDustIntakePerDate = hourlyUltrafineDustIntakePerDate
-              else { return }
-            self.healthKitService
-              .requestDistancePerHour(
-                from: date,
-                to: endDate) { [weak self] hourlyDistancePerDate in
-                  guard let self = self,
-                    let hourlyDistancePerDate = hourlyDistancePerDate
-                    else { return }
-                  if !self.healthKitService.isAuthorized {
-                    completion(nil, nil, HealthKitError.notAuthorized)
-                    return
-                  }
-                  let savedIntakes = coreDataIntakePerDate.sort().map { $0.value }
-                  let savedFineDustIntakes = savedIntakes.compactMap { $0.0 }
-                  let savedUltrafineDustIntakes = savedIntakes.compactMap { $0.1 }
-                  let (fineDusts, ultrafineDusts)
-                    = self.totalHourlyIntakes(hourlyFineDustIntakePerDate,
-                                              hourlyUltrafineDustIntakePerDate,
-                                              hourlyDistancePerDate)
-                  let totalFineDustIntakes = [savedFineDustIntakes, fineDusts].flatMap { $0 }
-                  let totalUltrafineDustIntakes
-                    = [savedUltrafineDustIntakes, ultrafineDusts].flatMap { $0 }
-                  // 코어데이터 갱신
-                  self.coreDataService
-                    .saveIntakes(totalFineDustIntakes,
-                                 totalUltrafineDustIntakes,
-                                 at: dates) { error in
-                                  if let error = error {
-                                    errorLog("코어데이터 갱신 실패: \(error.localizedDescription)")
-                                    return
-                                  } else {
-                                    debugLog("코어데이터 갱신 성공")
-                                  }
-                  }
-                  debugLog("일주일치 흡입량 가져오기 성공")
-                  debugLog(totalFineDustIntakes)
-                  debugLog(totalUltrafineDustIntakes)
-                  completion(totalFineDustIntakes, totalUltrafineDustIntakes, nil)
-            }
+    return .create { observer in
+      let startDate = Date.before(days: 6)
+      let endDate = Date.before(days: 1)
+      let savedIntakePerDate = self.persistenceService.intakes(from: startDate, to: endDate)
+      var fineDustIntakePerDate: [Date: Int] = [:]
+      var ultraFineDustIntakePerDate: [Date: Int] = [:]
+      let dates = Date.between(startDate, endDate)
+      for date in dates {
+        // 로컬에 저장된 데이터가 없는 경우
+        // 네트워킹 통하여 가져옴
+        guard let savedIntake = savedIntakePerDate[date] else {
+          self.dustAPIService.dayInfo(from: date, to: endDate)
+            .subscribe(
+              onNext: { hourlyDustIntakePerDate in
+                self.healthKitService.todayDistancePerHour(from: date, to: endDate)
+                  .subscribe(
+                    onNext: { hourlyDistancePerDate in
+                      let savedIntake = savedIntakePerDate.sort().map { $0.value }
+                      let savedFineDustIntake = savedIntake.compactMap { $0.fineDust }
+                      let savedUltraFineDustIntake = savedIntake.compactMap { $0.ultraFineDust }
+                      let dustIntakes = self.totalHourlyIntakes(hourlyDustIntakePerDate,
+                                                                hourlyDistancePerDate)
+                      let totalFineDustIntakes
+                        = [savedFineDustIntake, dustIntakes.fineDust].flatMap { $0 }
+                      let totalUltraFineDustIntakes
+                        = [savedUltraFineDustIntake, dustIntakes.ultraFineDust].flatMap { $0 }
+                      let intakes = zip(totalFineDustIntakes, totalUltraFineDustIntakes)
+                        .map { DustPair(fineDust: $0, ultraFineDust: $1) }
+                      self.persistenceService.saveIntakes(intakes, at: dates)
+                      observer.onNext(intakes)
+                      observer.onCompleted()
+                  }, onError: { error in
+                    observer.onError(error)
+                  })
+                  .disposed(by: self.disposeBag)
+            }, onError: { error in
+              observer.onError(error)
+            })
+            .disposed(by: self.disposeBag)
         }
-        return
+        // 로컬에 저장된 데이터가 있는 경우
+        fineDustIntakePerDate[date] = savedIntake.fineDust
+        ultraFineDustIntakePerDate[date] = savedIntake.ultraFineDust
       }
-      fineDustIntakePerDate[date] = savedIntake.fineDust
-      ultrafineDustIntakePerDate[date] = savedIntake.ultraFineDust
+      let totalFineDustIntakes = fineDustIntakePerDate.sort().map { $0.value }
+      let totalUltraFineDustIntakes = ultraFineDustIntakePerDate.sort().map { $0.value }
+      let element = zip(totalFineDustIntakes, totalUltraFineDustIntakes)
+        .map { DustPair(fineDust: $0, ultraFineDust: $1) }
+      observer.onNext(element)
+      observer.onCompleted()
+      return Disposables.create()
     }
-    debugLog("일주일치 흡입량 가져오기 성공")
-    debugLog("코어데이터에 주어진 날짜에 대한 데이터가 모두 있음")
-    let totalFineDustIntakes = fineDustIntakePerDate.sort().map { $0.value }
-    let totalUltrafineDustIntakes = ultrafineDustIntakePerDate.sort().map { $0.value }
-    completion(totalFineDustIntakes, totalUltrafineDustIntakes, nil)
-    
-    
-    
-    //    coreDataService
-    //      .requestIntakes(from: startDate, to: endDate) { [weak self] coreDataIntakePerDate, error in
-    //        if let error = error {
-    //          completion(nil, nil, error)
-    //          return
-    //        }
-    //        guard let self = self else { return }
-    //        var fineDustIntakePerDate: [Date: Int] = [:]
-    //        var ultrafineDustIntakePerDate: [Date: Int] = [:]
-    //        guard let coreDataIntakePerDate = coreDataIntakePerDate else { return }
-    //        let dates = Date.between(startDate, endDate)
-    //        for date in dates {
-    //          guard let savedIntake = coreDataIntakePerDate[date] else {
-    //            self.dustInfoService
-    //              .requestDayInfo(
-    //                from: date,
-    //                to: endDate
-    //              ) { [weak self] hourlyFineDustIntakePerDate, hourlyUltrafineDustIntakePerDate, error in
-    //                if let error = error {
-    //                  completion(nil, nil, error)
-    //                  return
-    //                }
-    //                guard let self = self,
-    //                  let hourlyFineDustIntakePerDate = hourlyFineDustIntakePerDate,
-    //                  let hourlyUltrafineDustIntakePerDate = hourlyUltrafineDustIntakePerDate
-    //                  else { return }
-    //                self.healthKitService
-    //                  .requestDistancePerHour(
-    //                    from: date,
-    //                    to: endDate) { [weak self] hourlyDistancePerDate in
-    //                      guard let self = self,
-    //                        let hourlyDistancePerDate = hourlyDistancePerDate
-    //                        else { return }
-    //                      if !self.healthKitService.isAuthorized {
-    //                        completion(nil, nil, HealthKitError.notAuthorized)
-    //                        return
-    //                      }
-    //                      let savedIntakes = coreDataIntakePerDate.sort().map { $0.value }
-    //                      let savedFineDustIntakes = savedIntakes.compactMap { $0.0 }
-    //                      let savedUltrafineDustIntakes = savedIntakes.compactMap { $0.1 }
-    //                      let (fineDusts, ultrafineDusts)
-    //                        = self.totalHourlyIntakes(hourlyFineDustIntakePerDate,
-    //                                                  hourlyUltrafineDustIntakePerDate,
-    //                                                  hourlyDistancePerDate)
-    //                      let totalFineDustIntakes = [savedFineDustIntakes, fineDusts].flatMap { $0 }
-    //                      let totalUltrafineDustIntakes
-    //                        = [savedUltrafineDustIntakes, ultrafineDusts].flatMap { $0 }
-    //                      // 코어데이터 갱신
-    //                      self.coreDataService
-    //                        .saveIntakes(totalFineDustIntakes,
-    //                                     totalUltrafineDustIntakes,
-    //                                     at: dates) { error in
-    //                                      if let error = error {
-    //                                        errorLog("코어데이터 갱신 실패: \(error.localizedDescription)")
-    //                                        return
-    //                                      } else {
-    //                                        debugLog("코어데이터 갱신 성공")
-    //                                      }
-    //                      }
-    //                      debugLog("일주일치 흡입량 가져오기 성공")
-    //                      debugLog(totalFineDustIntakes)
-    //                      debugLog(totalUltrafineDustIntakes)
-    //                      completion(totalFineDustIntakes, totalUltrafineDustIntakes, nil)
-    //                }
-    //            }
-    //            return
-    //          }
-    //          fineDustIntakePerDate[date] = savedIntake.fineDust ?? 0
-    //          ultrafineDustIntakePerDate[date] = savedIntake.ultrafineDust ?? 0
-    //        }
-    //        debugLog("일주일치 흡입량 가져오기 성공")
-    //        debugLog("코어데이터에 주어진 날짜에 대한 데이터가 모두 있음")
-    //        let totalFineDustIntakes = fineDustIntakePerDate.sort().map { $0.value }
-    //        let totalUltrafineDustIntakes = ultrafineDustIntakePerDate.sort().map { $0.value }
-    //        completion(totalFineDustIntakes, totalUltrafineDustIntakes, nil)
   }
 }
 
@@ -215,8 +103,8 @@ private extension IntakeService {
   }
   
   /// 시간별 흡입량 계산.
-  func totalHourlyIntake(_ hourlyDustIntake: DustPair<HourIntakePair>,
-                         _ hourlyDistance: HourIntakePair) -> DustPair<Int> {
+  func totalHourlyIntake(_ hourlyDustIntake: DustPair<[Hour: Int]>,
+                         _ hourlyDistance: [Hour: Int]) -> DustPair<Int> {
     let sortedFineDust = hourlyDustIntake.fineDust.sort().map { $0.value }
     let sortedUltraFineDust = hourlyDustIntake.ultraFineDust.sort().map { $0.value }
     let sortedDistance = hourlyDistance.sort().map { $0.value }
@@ -228,12 +116,12 @@ private extension IntakeService {
   }
   
   /// 날짜별 시간별 총 흡입량 계산.
-  func totalHourlyIntakes(_ hourlyDustIntakePerDate: DustPair<DateHourIntakePair>,
-                          _ hourlyDistancePerDate: DateHourIntakePair) -> DustPair<[Int]> {
+  func totalHourlyIntakes(_ hourlyDustIntakePerDate: DustPair<[Date: [Hour: Int]]>,
+                          _ hourlyDistancePerDate: [Date: [Hour: Int]]) -> DustPair<[Int]> {
     var fineDusts: [Int] = []
     var ultrafineDusts: [Int] = []
     let sortedHourlyFineDustIntakePerDate = hourlyDustIntakePerDate.fineDust.sort()
-    let sortedHourlyUltrafineDustIntakePerDate = hourlyDustIntakePerDate.ultraFineDust.sort()
+    let sortedHourlyUltraㄹineDustIntakePerDate = hourlyDustIntakePerDate.ultraFineDust.sort()
     let sortedHourlyDistancePerDate = hourlyDistancePerDate.sort()
     zip(sortedHourlyFineDustIntakePerDate, sortedHourlyDistancePerDate).forEach {
       let (hourlyFineDustIntakePerDate, hourlyDistancePerDate) = $0
@@ -243,11 +131,11 @@ private extension IntakeService {
         .reduce(0) { $0 + intakePerHour(dust: $1.0.value, distance: $1.1.value) }
       fineDusts.append(intake)
     }
-    zip(sortedHourlyUltrafineDustIntakePerDate, sortedHourlyDistancePerDate).forEach {
+    zip(sortedHourlyUltraㄹineDustIntakePerDate, sortedHourlyDistancePerDate).forEach {
       let (hourlyUltrafineDustIntakePerDate, hourlyDistancePerDate) = $0
-      let sortedHourlyUltrafineDustIntake = hourlyUltrafineDustIntakePerDate.value.sort()
+      let sortedHourlyUltraㄹineDustIntake = hourlyUltrafineDustIntakePerDate.value.sort()
       let sortedHourlyDistance = hourlyDistancePerDate.value.sort()
-      let intake = zip(sortedHourlyUltrafineDustIntake, sortedHourlyDistance)
+      let intake = zip(sortedHourlyUltraㄹineDustIntake, sortedHourlyDistance)
         .reduce(0) { $0 + intakePerHour(dust: $1.0.value, distance: $1.1.value) }
       ultrafineDusts.append(intake)
     }

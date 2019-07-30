@@ -100,6 +100,7 @@
 		8E91E5E7B76B7A11D1D32C5A61BC297A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7B2EF4E7A489C54FEE33EE4409FC10F /* Main.storyboard */; };
 		8F83EA3FBEAB356144B119EC30A813BA /* FeedbackContents.json in Resources */ = {isa = PBXBuildFile; fileRef = 97E53140D236B58FC1528CF8DEDAADF0 /* FeedbackContents.json */; };
 		92377948EFDBAE1845987BFBABC84776 /* TestTypealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3598B181540AEBB192D612C16AC5BFAD /* TestTypealias.swift */; };
+		945A3D8C4CB4966671A4751FFEEE6E64 /* HealthKitHourInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 718EBF4BFF5635EFA22086B1F0C3D434 /* HealthKitHourInterval.swift */; };
 		94A0A6A8B3E741BB2E2B0A4A4A4FFCEB /* TestDateFormatter+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A417246ABE6AC2BB1B827AC6109B4D /* TestDateFormatter+.swift */; };
 		9702669F003FB0B4139CD7D1FA233433 /* StickGraphView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B713365C5B8FF561BB285C8EE6CAE7 /* StickGraphView.xib */; };
 		977ECFA384F7EE88E01C5B276680F78A /* TestHealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985BB182EE3791206435A2EB85840E17 /* TestHealthKitService.swift */; };
@@ -252,6 +253,7 @@
 		6CB7A59C01A6BEA73951091DC6C6C60F /* FineDust.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FineDust.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D62E9FA1FC1493F68B0475BC995ED9E /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		6DBC99DF57EDD8EA31DD58EFB8434C65 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		718EBF4BFF5635EFA22086B1F0C3D434 /* HealthKitHourInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitHourInterval.swift; sourceTree = "<group>"; };
 		72A417246ABE6AC2BB1B827AC6109B4D /* TestDateFormatter+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestDateFormatter+.swift"; sourceTree = "<group>"; };
 		771A6EB50A2D651B9AEE270F6542C576 /* TestRatioPieGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRatioPieGraphView.swift; sourceTree = "<group>"; };
 		799E98649DD2EA94D4C69A5B8A42B492 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Statistics.storyboard; sourceTree = "<group>"; };
@@ -452,15 +454,6 @@
 				A5B9B66402A9E9E9FCAA8D8E34A15E32 /* DummyNetworkManager.swift */,
 			);
 			path = Dummy;
-			sourceTree = "<group>";
-		};
-		80CD1318CD3C8EE348F3795C53BAF74A /* Intake */ = {
-			isa = PBXGroup;
-			children = (
-				DAFD58F012D7DEDBF1B32931A5DBBEAA /* IntakeService.swift */,
-				2700988C3F653DF5DFFF0F76DC39C308 /* IntakeServiceType.swift */,
-			);
-			path = Intake;
 			sourceTree = "<group>";
 		};
 		1AD442205551B1E4A9681E5D2C19846B /* Supports */ = {
@@ -685,6 +678,15 @@
 			path = Storyboards;
 			sourceTree = "<group>";
 		};
+		80CD1318CD3C8EE348F3795C53BAF74A /* Intake */ = {
+			isa = PBXGroup;
+			children = (
+				DAFD58F012D7DEDBF1B32931A5DBBEAA /* IntakeService.swift */,
+				2700988C3F653DF5DFFF0F76DC39C308 /* IntakeServiceType.swift */,
+			);
+			path = Intake;
+			sourceTree = "<group>";
+		};
 		8139D2AFF09C6FDA7EBB4647E5AD90D7 /* Mock */ = {
 			isa = PBXGroup;
 			children = (
@@ -753,6 +755,7 @@
 				7B07FACC38BE06F5E09094B58CB82CD1 /* DustGrade.swift */,
 				E385A65D662A4BFBB6BB8E47ABEE5D08 /* FeedbackImportance.swift */,
 				2B5344DF65472E8B15445A7E4D8BBB1A /* GeoConverter.swift */,
+				718EBF4BFF5635EFA22086B1F0C3D434 /* HealthKitHourInterval.swift */,
 				974BD95390CD713C2699E7119D56D3BB /* HealthKitQuery.swift */,
 				7D853CED5F198E45684AFEF4CCFF7AD7 /* Hour.swift */,
 				B87677B1836C7ED726DF2E027236E479 /* IntakeGrade.swift */,
@@ -1032,6 +1035,7 @@
 				CA9E1E6429E34A3756F559BF7DD73F52 /* GeocodeServiceType.swift in Sources */,
 				5001A870754216162BAAEF6702256CFE /* GraphDrawable.swift in Sources */,
 				A36615F0BB7BAB9ABC3FBEAF3A1E5E2E /* HealthKitError.swift in Sources */,
+				945A3D8C4CB4966671A4751FFEEE6E64 /* HealthKitHourInterval.swift in Sources */,
 				99B44785CAA5D121CC18FB84EEA3EB4A /* HealthKitObserver.swift in Sources */,
 				20D76CF5014F8E72CEFFEA5382CCF38C /* HealthKitQuery.swift in Sources */,
 				537FA90D61BE9D04C8FCF63950DCE428 /* HealthKitService.swift in Sources */,

@@ -14,38 +14,14 @@ import RxSwift
 
 final class LocationManager: NSObject {
   
-  private let disposeBag = DisposeBag()
-  
-  private let geocodeService: GeocodeServiceType
-  
-  private let dustAPIService: DustAPIServiceType
-  
-  private let locationManager = CLLocationManager().then {
+  fileprivate let locationManager = CLLocationManager().then {
     $0.desiredAccuracy = kCLLocationAccuracyBest
     $0.distanceFilter = kCLDistanceFilterNone
   }
   
-  init(geocodeService: GeocodeServiceType = GeocodeService(),
-       dustAPIService: DustAPIServiceType = DustAPIService()) {
-    super.init()
-    self.geocodeService = geocodeService
-    self.dustAPIService = dustAPIService
-    
-    locationManager.rx.didChangeAuthorization
-      .map { $0.status }
-      .subscribe(onNext: authorizationDidChange)
-      .disposed(by: disposeBag)
-    
-    locationManager.rx.didUpdateLocations
-      .map { $0.locations.first }
-      .subscribe(onNext: locationDidUpdate)
-      .disposed(by: disposeBag)
-    
-    locationManager.rx.didError
-      .map { $0.error }
-      .subscribe(onNext: errorHandler)
-      .disposed(by: disposeBag)
-  }
+  static let shared = LocationManager()
+  
+  private override init() { }
 }
 
 // MARK: - Implement LocationManagerType
@@ -54,51 +30,6 @@ extension LocationManager: LocationManagerType {
   
   var authorizationStatus: CLAuthorizationStatus {
     return CLLocationManager.authorizationStatus()
-  }
-  
-  var authorizationDidChange: ((CLAuthorizationStatus) -> Void)? {
-    return { status in
-      switch status {
-      case .authorizedAlways, .authorizedWhenInUse:
-        self.startUpdatingLocation()
-      default:
-        LocationObserver.shared.didAuthorizationDenied.accept(Void())
-      }
-    }
-  }
-  
-  var locationDidUpdate: ((CLLocation?) -> Void)? {
-    return { [weak self] location in
-      guard let self = self else { return }
-      guard let location = location else { return }
-      self.stopUpdatingLocation()
-      let coordinate = location.coordinate
-      let convertedCoordinate
-        = GeoConverter().convert(sourceType: .WGS_84,
-                                 destinationType: .TM,
-                                 geoPoint: .init(x: coordinate.longitude,
-                                                 y: coordinate.latitude))
-      SharedInfo.shared.x = convertedCoordinate?.x ?? 0
-      SharedInfo.shared.y = convertedCoordinate?.y ?? 0
-      
-      self.geocodeService.geocode(for: location)
-        .do(onNext: { address in SharedInfo.shared.address = address })
-        .withLatestFrom(self.dustAPIService.observatory())
-        .subscribe(
-          onNext: { observatory in
-            SharedInfo.shared.observatory = observatory
-            LocationObserver.shared.didSuccess.accept(Void())
-        }, onError: { error in
-          LocationObserver.shared.didError.accept(error)
-        })
-        .disposed(by: self.disposeBag)
-    }
-  }
-  
-  var errorHandler: ((Error) -> Void)? {
-    return { error in
-      LocationObserver.shared.didError.accept(error)
-    }
   }
   
   func requestAuthorization() {
@@ -111,5 +42,26 @@ extension LocationManager: LocationManagerType {
   
   func stopUpdatingLocation() {
     locationManager.stopUpdatingLocation()
+  }
+}
+
+// MARK: - Reactive Extension
+
+extension Reactive where Base: LocationManager {
+  
+  var authorizationStatus: Observable<CLAuthorizationStatus> {
+    return base.locationManager.rx.didChangeAuthorization
+      .map { $0.status }
+  }
+  
+  var location: Observable<CLLocation> {
+    return base.locationManager.rx.didUpdateLocations
+      .map { $0.locations.first }
+      .filterNil()
+  }
+  
+  var error: Observable<Error> {
+    return base.locationManager.rx.didError
+      .map { $0.error }
   }
 }
