@@ -62,7 +62,7 @@ final class HealthKitService: HealthKitServiceType {
   
   func todayDistancePerHour() -> Observable<[Hour: Int]> {
     return .create { observer in
-      var hourIntakePair = HourIntakePair()
+      var hourIntakePair = [Hour: Int]()
       let semaphore = DispatchSemaphore(value: 0)
       var temp = 0
       self.requestHealthKitData(healthKitQuery: .distance,
@@ -96,8 +96,8 @@ final class HealthKitService: HealthKitServiceType {
   func todayDistancePerHour(from startDate: Date,
                             to endDate: Date) -> Observable<[Date: [Hour: Int]]> {
     return .create { observer in
-      var hourIntakePair = HourIntakePair()
-      var dateHourIntakePair = DateHourIntakePair()
+      var hourIntakePair = [Hour: Int]()
+      var dateHourIntakePair = [Date: [Hour: Int]]()
       let interval = Calendar.current.dateComponents([.day], from: startDate, to: endDate)
       guard let day = interval.day, day >= 0 else {
         observer.onError(NSError(domain: "", code: 0, userInfo: nil))

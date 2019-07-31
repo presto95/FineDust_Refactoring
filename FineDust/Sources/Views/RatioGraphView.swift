@@ -8,11 +8,17 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 
 final class RatioGraphView: UIView {
   
   weak var dataSource: RatioGraphViewDataSource?
+  
+  private let disposeBag = DisposeBag()
+  
+  fileprivate let viewModel = RatioGraphViewModel()
   
   @IBOutlet private weak var titleLabel: UILabel!
   
@@ -21,6 +27,12 @@ final class RatioGraphView: UIView {
   private let pieGraphView = UIView.instantiate(fromType: RatioPieGraphView.self)
   
   private let stickGraphView = UIView.instantiate(fromType: RatioStickGraphView.self)
+  
+  override func awakeFromNib() {
+    super.awakeFromNib()
+    bindViewModel()
+    setup()
+  }
   
   func setup() {
     addSubview(pieGraphView) {
@@ -35,12 +47,46 @@ final class RatioGraphView: UIView {
       $0.bottom.equalTo(pieGraphView.snp.bottom)
       $0.trailing.equalTo(snp.trailing).offset(16)
     }
+  }
+}
+
+// MARK: - Private Method
+
+private extension RatioGraphView {
+  
+  func bindViewModel() {
+    viewModel.pieGraphViewDataSource.asDriver(onErrorJustReturn: (0, 0))
+      .drive(pieGraphView.rx.setup)
+      .disposed(by: disposeBag)
     
-    let ratio = dataSource?.intakeRatio ?? .leastNonzeroMagnitude
-    let endAngle = ratio * 2 * .pi - .pi / 2
-    let averageIntake = Int(Double((dataSource?.totalIntake ?? 1)) / 7)
-    let todayIntake = dataSource?.todayIntake ?? 1
-    pieGraphView.setup(ratio: ratio, endAngle: endAngle)
-    stickGraphView.setup(average: averageIntake, today: todayIntake)
+    viewModel.stickGraphViewDataSource.asDriver(onErrorJustReturn: (0, 0))
+      .drive(stickGraphView.rx.setup)
+      .disposed(by: disposeBag)
+  }
+}
+
+// MARK: - Reactive Extension
+
+extension Reactive where Base: RatioGraphView {
+  
+  /// 전체 흡입량에 대한 부분의 비율.
+  var intakeRatio: Binder<Double> {
+    return .init(base) { target, intakeRatio in
+      target.viewModel.setIntakeRatio(intakeRatio)
+    }
+  }
+  
+  /// 일주일간 총 흡입량.
+  var totalIntake: Binder<Int> {
+    return .init(base) { target, totalIntake in
+      target.viewModel.setTotalIntake(totalIntake)
+    }
+  }
+  
+  /// 오늘의 흡입량.
+  var todayIntake: Binder<Int> {
+    return .init(base) { target, todayIntake in
+      target.viewModel.setTodayIntake(todayIntake)
+    }
   }
 }

@@ -73,7 +73,7 @@ final class DustAPIService: DustAPIServiceType {
     }
   }
   
-  func dayInfo() -> Observable<DustPair<HourIntakePair>> {
+  func dayInfo() -> Observable<DustPair<[Hour: Int]>> {
     return .create { observer in
       let task = self.provider.request(.dayInfo) { result in
         switch result {
@@ -81,8 +81,8 @@ final class DustAPIService: DustAPIServiceType {
           do {
             let decoded = try self.validate(response, to: DustAPIInfoResponse.self)
             let items = decoded.items
-            var hourlyFineDustIntake: HourIntakePair = [:]
-            var hourlyUltraFineDustIntake: HourIntakePair = [:]
+            var hourlyFineDustIntake: [Hour: Int] = [:]
+            var hourlyUltraFineDustIntake: [Hour: Int] = [:]
             for item in items {
               let (hour, isMidnight) = self.hourInDustDate(item.dataTime)
               hourlyFineDustIntake[hour] = item.fineDustValue
@@ -105,7 +105,7 @@ final class DustAPIService: DustAPIServiceType {
     }
   }
   
-  func dayInfo(from startDate: Date, to endDate: Date) -> Observable<DustPair<DateHourIntakePair>> {
+  func dayInfo(from startDate: Date, to endDate: Date) -> Observable<DustPair<[Date: [Hour: Int]]>> {
     return .create { observer in
       let task = self.provider.request(.daysInfo(startDate: startDate, endDate: endDate)) { result in
         switch result {
@@ -113,8 +113,8 @@ final class DustAPIService: DustAPIServiceType {
           do {
             let decoded = try self.validate(response, to: DustAPIInfoResponse.self)
             let items = decoded.items
-            var hourlyFineDustIntakePerDate: DateHourIntakePair = [:]
-            var hourlyUltraFineDustIntakePerDate: DateHourIntakePair = [:]
+            var hourlyFineDustIntakePerDate: [Date: [Hour: Int]] = [:]
+            var hourlyUltraFineDustIntakePerDate: [Date: [Hour: Int]] = [:]
             for item in items {
               let (hour, _) = self.hourInDustDate(item.dataTime)
               let currentReferenceDate = self.referenceDate(item.dataTime)

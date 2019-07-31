@@ -8,6 +8,8 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 
 final class RatioStickGraphView: UIView {
@@ -27,8 +29,12 @@ final class RatioStickGraphView: UIView {
     
     static let springVelocity: CGFloat = 0.5
     
-    static let options: UIView.AnimationOptions = [.curveEaseInOut]
+    static let options: UIView.AnimationOptions = .curveEaseInOut
   }
+  
+  private let disposeBag = DisposeBag()
+  
+  fileprivate let viewModel = RatioStickGraphViewModel()
   
   @IBOutlet private weak var percentLabel: UILabel!
   
@@ -40,74 +46,95 @@ final class RatioStickGraphView: UIView {
     
   @IBOutlet private weak var todayIntakeGraphView: UIView!
   
-  
-  @IBOutlet private weak var weeklyAverageLabel: UILabel!
-  
-  @IBOutlet private weak var todayLabel: UILabel!
-  
-  private var averageIntake: Int = 0
-  
-  private var todayIntake: Int = 0
-  
   override func awakeFromNib() {
     super.awakeFromNib()
+    bindViewModel()
     averageIntakeGraphView.layer.applyBorder(radius: Layer.radius)
     todayIntakeGraphView.layer.applyBorder(radius: Layer.radius)
   }
   
-  func setup(average: Int, today: Int) {
-    averageIntake = average
-    todayIntake = today
-    reloadGraphView()
+  func setup(averageIntake: Int, todayIntake: Int) {
+    viewModel.setIntakeValues(averageIntake, todayIntake)
   }
 }
 
-// MARK: - Implement GraphDrawable
+// MARK: - Private Method
 
-extension RatioStickGraphView: GraphDrawable {
+private extension RatioStickGraphView {
   
-  func deinitializeSubviews() {
-    averageIntakeGraphView.snp.updateConstraints { $0.height.equalTo(0.01) }
-    todayIntakeGraphView.snp.updateConstraints { $0.height.equalTo(0.01) }
-    layoutIfNeeded()
-  }
-  
-  func drawGraph() {
-    let averageIntakeTempMultiplier = averageIntake >= todayIntake
-      ? 1
-      : CGFloat(averageIntake) / CGFloat(todayIntake)
-    let todayIntakeTempMultiplier = averageIntake >= todayIntake
-      ? CGFloat(todayIntake) / CGFloat(averageIntake)
-      : 1
-    let averageIntakeMultiplier = !averageIntakeTempMultiplier.canBecomeMultiplier
-      ? 0.01
-      : averageIntakeTempMultiplier
-    let todayIntakeMultiplier = !todayIntakeTempMultiplier.canBecomeMultiplier
-      ? 0.01
-      : todayIntakeTempMultiplier
+  func bindViewModel() {
+    let valueUpdatedDriver = viewModel.intakeValuesUpdated.asDriver(onErrorJustReturn: (0, 0))
     
-    UIView.animate(
-      withDuration: Animation.duration,
-      delay: Animation.delay,
-      usingSpringWithDamping: Animation.damping,
-      initialSpringVelocity: Animation.springVelocity,
-      options: Animation.options,
-      animations: { [weak self] in
-        self?.averageIntakeGraphView.snp
-          .updateConstraints { $0.height.equalTo(averageIntakeMultiplier) }
-        self?.todayIntakeGraphView.snp
-          .updateConstraints { $0.height.equalTo(todayIntakeMultiplier) }
-        self?.layoutIfNeeded()
-      },
-      completion: nil
-    )
+    valueUpdatedDriver
+      .map { Double($1) / Double($0) * 100 }
+      .map { "\(Int($0))" }
+      .drive(percentLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    valueUpdatedDriver
+      .map { "\($0.averageIntake)" }
+      .drive(averageIntakeLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    valueUpdatedDriver
+      .map { "\($0.todayIntake)" }
+      .drive(todayIntakeLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    valueUpdatedDriver
+      .drive(onNext: { [weak self] averageIntake, todayIntake in
+        guard let self = self else { return }
+        // deinitializeSubviews
+        self.averageIntakeGraphView.snp.updateConstraints { $0.height.equalTo(0.01) }
+        self.todayIntakeGraphView.snp.updateConstraints { $0.height.equalTo(0.01) }
+        self.layoutIfNeeded()
+        // drawGraph
+        let averageIntakeTempMultiplier = averageIntake >= todayIntake
+          ? 1
+          : CGFloat(averageIntake) / CGFloat(todayIntake)
+        let todayIntakeTempMultiplier = averageIntake >= todayIntake
+          ? CGFloat(todayIntake) / CGFloat(averageIntake)
+          : 1
+        let averageIntakeMultiplier = !averageIntakeTempMultiplier.canBecomeMultiplier
+          ? 0.01
+          : averageIntakeTempMultiplier
+        let todayIntakeMultiplier = !todayIntakeTempMultiplier.canBecomeMultiplier
+          ? 0.01
+          : todayIntakeTempMultiplier
+        
+        UIView.animate(
+          withDuration: Animation.duration,
+          delay: Animation.delay,
+          usingSpringWithDamping: Animation.damping,
+          initialSpringVelocity: Animation.springVelocity,
+          options: Animation.options,
+          animations: { [weak self] in
+            self?.averageIntakeGraphView.snp
+              .updateConstraints { $0.height.equalTo(averageIntakeMultiplier) }
+            self?.todayIntakeGraphView.snp
+              .updateConstraints { $0.height.equalTo(todayIntakeMultiplier) }
+            self?.layoutIfNeeded()
+          },
+          completion: nil
+        )
+        // setLabels
+        let tempRatio = Double(todayIntake) / Double(averageIntake) * 100
+        let ratio = !tempRatio.canBecomeMultiplier ? 0 : tempRatio
+        self.percentLabel.text = "\(Int(ratio))%"
+        self.averageIntakeLabel.text = "\(averageIntake)"
+        self.todayIntakeLabel.text = "\(todayIntake)"
+      })
+      .disposed(by: disposeBag)
   }
+}
+
+// MARK: - Reactive Extension
+
+extension Reactive where Base: RatioStickGraphView {
   
-  func setLabels() {
-    let tempRatio = Double(todayIntake) / Double(averageIntake) * 100
-    let ratio = !tempRatio.canBecomeMultiplier ? 0 : tempRatio
-    percentLabel.text = "\(Int(ratio))%"
-    averageIntakeLabel.text = "\(averageIntake)"
-    todayIntakeLabel.text = "\(todayIntake)"
+  var setup: Binder<(averageIntake: Int, todayIntake: Int)> {
+    return .init(base) { target, values in
+      target.viewModel.setIntakeValues(values.averageIntake, values.todayIntake)
+    }
   }
 }

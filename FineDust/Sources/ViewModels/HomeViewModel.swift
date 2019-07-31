@@ -11,6 +11,8 @@ import RxSwift
 
 protocol HomeViewModelInputs {
   
+  func fetchLastSavedData()
+  
   func setPresented()
   
   func tapAuthorizationButton()
@@ -77,7 +79,7 @@ final class HomeViewModel {
        healthKitService: HealthKitServiceType = HealthKitService(),
        dustAPIService: DustAPIServiceType = DustAPIService(),
        intakeService: IntakeServiceType = IntakeService(),
-       locationManager: LocationManagerType = LocationManager()) {
+       locationManager: LocationManagerType = LocationManager.shared) {
     self.persistenceService = persistenceService
     self.healthKitService = healthKitService
     self.dustAPIService = dustAPIService
@@ -87,6 +89,15 @@ final class HomeViewModel {
 }
 
 extension HomeViewModel: HomeViewModelInputs {
+  
+  func fetchLastSavedData() {
+    guard let lastSavedData = persistenceService.lastSavedData() else { return }
+    stepsRelay.accept(lastSavedData.steps)
+    distanceRelay.accept(Int(lastSavedData.distance))
+    addressRelay.accept(lastSavedData.address)
+    gradeRelay.accept(DustGrade(rawValue: lastSavedData.grade) ?? .default)
+    recentFineDustValueRelay.accept(lastSavedData.recentFineDust)
+  }
   
   func setPresented() {
     isPresentedRelay.accept(true)
@@ -128,19 +139,19 @@ extension HomeViewModel: HomeViewModelOutputs {
   }
   
   var distance: Observable<Int> {
-    
+    return distanceRelay.asObservable()
   }
   
   var address: Observable<String> {
-    
+    return addressRelay.asObservable()
   }
   
   var grade: Observable<DustGrade> {
-    
+    return gradeRelay.asObservable()
   }
   
   var recentFineDustValue: Observable<Int> {
-    
+    return recentFineDustValueRelay.asObservable()
   }
 }
 

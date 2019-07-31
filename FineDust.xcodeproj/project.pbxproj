@@ -54,12 +54,10 @@
 		4934B52364C970718673AE16B2826941 /* Locale+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C15C0748C03F73EAD6344B72C300C9D /* Locale+.swift */; };
 		4DF2C48B18B20BDC1056BF7A02847916 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA43CC843D82A4046B1ED85D4519F9A /* PersistenceService.swift */; };
 		4E465BBB70E4389FEF8FF500304C49D8 /* LocationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5801758A2FD4222E83D831EA6CF7EF50 /* LocationObserver.swift */; };
-		5001A870754216162BAAEF6702256CFE /* GraphDrawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E153A1D813F21BE9088343DDA897A22B /* GraphDrawable.swift */; };
 		519B7F0016C2C381A823F4E7629D0A85 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E26FB8E681522D59A6D20304C6C35C8 /* HealthKit.framework */; };
 		52A157163AAF09241CA42C95E8573798 /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D843CA8FAB1C219473C983BD26946C00 /* UIView+.swift */; };
 		537FA90D61BE9D04C8FCF63950DCE428 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E3C26ACD7F41B2C40E028496913E9C /* HealthKitService.swift */; };
 		54C189CDAC02D1A5A5F542C65DC100EF /* GeoConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5344DF65472E8B15445A7E4D8BBB1A /* GeoConverter.swift */; };
-		55C97458A7D103F88156CA664B27D6C9 /* RatioGraphViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACADE03E303DFD70F1FE5837C0FBEE19 /* RatioGraphViewDataSource.swift */; };
 		5619E6B86C79D63CFB88B1A17600321D /* FeedbackRecommendationSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C102AA5466021BEA2A5076EF755C4B /* FeedbackRecommendationSectionModel.swift */; };
 		56BF4E6D6AFAB5570866F173C2E45AFA /* SharedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81BEEAC1BBD31F0734B18B81183373E2 /* SharedInfo.swift */; };
 		5C0B072736FC009353CB278EC1168C4F /* Pods_FineDust.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C03519E3F71E91D0157CA50457DC659 /* Pods_FineDust.framework */; };
@@ -73,7 +71,6 @@
 		62671A2A6AE0F556D3848D9FF9DE77BC /* RatioStickGraphView.xib in Resources */ = {isa = PBXBuildFile; fileRef = C5C1E21F53D7194A77E5F5AEA3256903 /* RatioStickGraphView.xib */; };
 		654B3E244E54BD8C53568FA22D8001B0 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC873B6535665900ED21905CC761A0E3 /* UIImage+.swift */; };
 		66B5FE3AF24D660C65650781493A76BA /* MockDustObservatoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B642BB98DC614672674ADA7E7FEAA0DD /* MockDustObservatoryManager.swift */; };
-		67F21761F8051318A882D67DB98307FF /* IntakeRequestable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9937D9F1DAE246941C851EC4D471E4EC /* IntakeRequestable.swift */; };
 		68F92AAFDF6AC8A5486277EFB10999CD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D31862706C5D51453B6F68F3CB47217 /* Assets.xcassets */; };
 		6A3A385523A062DBF382732DF71B4A7F /* TestDustInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F56B7CE2ABD245DD340EE0A2C9DEFC /* TestDustInfoService.swift */; };
 		6BA2974BDDA4BEBF0C6A52281A51EC7B /* TestNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54623E292883E938E0F37B68511E18E4 /* TestNetworkManager.swift */; };
@@ -92,8 +89,8 @@
 		81D20E9CADF01244ADFC634BACFD4A02 /* DummyJSONManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E18EF4EFB5BFEBF0FF294BACC38A595 /* DummyJSONManager.swift */; };
 		851F93487B7BB91FF6F05A0EF4ADF451 /* UIView+SnapKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72908E84326041B33B7F5672E48B63E /* UIView+SnapKit.swift */; };
 		85ACF122C2BE10631AD24DE39CBF2287 /* TestGeocoderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1AE6207E6CAED4BCB1891043C3B816 /* TestGeocoderManager.swift */; };
+		894BE58244F853CEA4EB9AA969706029 /* RatioStickGraphViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C70E57BBFC8185B4F921092004E0DC8 /* RatioStickGraphViewModel.swift */; };
 		8A417846DD692018FCA21EF813914B1E /* MockHealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6287CE8EC60C4A3AD1C4B219CEF3F5 /* MockHealthKitManager.swift */; };
-		8A73C618AD4EF8A0E2A8D4926464AC76 /* StickGraphViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB47E3C0978FF98F41652103AD28A53 /* StickGraphViewDataSource.swift */; };
 		8C1DD6FD68AE9AABF2C9BA1435574694 /* HealthKitServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5102CC41F567E949B07A10C27E6797F3 /* HealthKitServiceType.swift */; };
 		8C20248B736CF39A0DD48D333D6C7193 /* StickGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D44A1CD7D5AEDEA52A7B5ACEC5D681 /* StickGraphView.swift */; };
 		8D77A5561A1746147A27E6714A1A3DF3 /* String+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A37FD10771CEEAD7E013A24A38A313F /* String+.swift */; };
@@ -133,6 +130,7 @@
 		C64AA8808F6EB67E988B6A529099FB42 /* FeedbackRecommendationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F87D198B2C30E7A31DD677DEBF129E /* FeedbackRecommendationCell.swift */; };
 		C87C4BE70C53C51B4161D38D32934EF5 /* Feedback.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E77C2D71CF6E9DBBD96C23B4B0C0708D /* Feedback.storyboard */; };
 		CA9E1E6429E34A3756F559BF7DD73F52 /* GeocodeServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C5A75D5FF6509207BA72517CBBD514 /* GeocodeServiceType.swift */; };
+		CE028C13EFC21E343325F417E8813629 /* RatioPieGraphViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7B5E72C1E6D74A8FDBB023242361E8D /* RatioPieGraphViewModel.swift */; };
 		CE0DCB1F15FEFE05B3DC6E0D4AFE6ACB /* TestHTTPError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF37AC562DA142BD0BAF691A7F4D3E72 /* TestHTTPError.swift */; };
 		CE8534527C906601AE29361074B6723B /* TestDustManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA1BA0F78A7CE3C7FF664CFD9D7EA5E1 /* TestDustManager.swift */; };
 		D11502BF018BDE2B921882A9FF0CA2DD /* NSObject+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5976FE69AFC67BD4BEC1DC74F88DC23A /* NSObject+.swift */; };
@@ -219,6 +217,7 @@
 		3598B181540AEBB192D612C16AC5BFAD /* TestTypealias.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTypealias.swift; sourceTree = "<group>"; };
 		3AF4129D94E58930CD9E5276E2525669 /* GeocodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeocodeService.swift; sourceTree = "<group>"; };
 		3C15C0748C03F73EAD6344B72C300C9D /* Locale+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Locale+.swift"; sourceTree = "<group>"; };
+		3C70E57BBFC8185B4F921092004E0DC8 /* RatioStickGraphViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatioStickGraphViewModel.swift; sourceTree = "<group>"; };
 		3E18EF4EFB5BFEBF0FF294BACC38A595 /* DummyJSONManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyJSONManager.swift; sourceTree = "<group>"; };
 		3FD4046146A04E7C79FD8CC5F3BCBA0F /* FeedbackContents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FeedbackContents.swift; path = FineDust/Sources/Models/FeedbackContents.swift; sourceTree = SOURCE_ROOT; };
 		426C701A827BC6DA8F3D6120768DD485 /* TestDustInfoManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestDustInfoManager.swift; sourceTree = "<group>"; };
@@ -257,7 +256,6 @@
 		72A417246ABE6AC2BB1B827AC6109B4D /* TestDateFormatter+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestDateFormatter+.swift"; sourceTree = "<group>"; };
 		771A6EB50A2D651B9AEE270F6542C576 /* TestRatioPieGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRatioPieGraphView.swift; sourceTree = "<group>"; };
 		799E98649DD2EA94D4C69A5B8A42B492 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Statistics.storyboard; sourceTree = "<group>"; };
-		7AB47E3C0978FF98F41652103AD28A53 /* StickGraphViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StickGraphViewDataSource.swift; sourceTree = "<group>"; };
 		7B07FACC38BE06F5E09094B58CB82CD1 /* DustGrade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DustGrade.swift; sourceTree = "<group>"; };
 		7CCC24FEE510E7D01D68706187551A87 /* IntentsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IntentsUI.framework; path = System/Library/Frameworks/IntentsUI.framework; sourceTree = SDKROOT; };
 		7D853CED5F198E45684AFEF4CCFF7AD7 /* Hour.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hour.swift; sourceTree = "<group>"; };
@@ -284,7 +282,6 @@
 		985BB182EE3791206435A2EB85840E17 /* TestHealthKitService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestHealthKitService.swift; sourceTree = "<group>"; };
 		986780C6CD66A004B310FDEEC0E52DE5 /* FineDustTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FineDustTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9927054B520AB4F19F6A58ED21149C9A /* TestDustGrade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDustGrade.swift; sourceTree = "<group>"; };
-		9937D9F1DAE246941C851EC4D471E4EC /* IntakeRequestable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntakeRequestable.swift; sourceTree = "<group>"; };
 		9B263A38D0219036D99D3A471387549A /* DustAPIResponseType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DustAPIResponseType.swift; sourceTree = "<group>"; };
 		9C03519E3F71E91D0157CA50457DC659 /* Pods_FineDust.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FineDust.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C4E6B03ECB4C9F95B306577D6B03578 /* DustAPIResultCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DustAPIResultCode.swift; path = FineDust/Sources/Commons/DustAPIResultCode.swift; sourceTree = SOURCE_ROOT; };
@@ -298,7 +295,6 @@
 		A5B9B66402A9E9E9FCAA8D8E34A15E32 /* DummyNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyNetworkManager.swift; sourceTree = "<group>"; };
 		A8651F7D66704DD0EFF109BBB240977E /* IntakeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntakeModel.swift; sourceTree = "<group>"; };
 		AC112BA694D565FA8781B3EA193CB428 /* StatisticsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
-		ACADE03E303DFD70F1FE5837C0FBEE19 /* RatioGraphViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatioGraphViewDataSource.swift; sourceTree = "<group>"; };
 		AD909BD36D563D18742509B5CD525671 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
 		AE0671DD8371627430E075564C0E7979 /* DummyDustInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyDustInfoService.swift; sourceTree = "<group>"; };
 		AF7978BCEC04CA2E0B289F8F7658832C /* TestCoreDataService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestCoreDataService.swift; sourceTree = "<group>"; };
@@ -328,7 +324,6 @@
 		DCFE5EB109121B4E2429575860BF1BAA /* HomeInfoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeInfoView.xib; sourceTree = "<group>"; };
 		E0BB900D39FF9585B0E16F227F301448 /* FineDust.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FineDust.entitlements; sourceTree = "<group>"; };
 		E0C26B3B0593407113C2ED88D1A6DDA6 /* DummyHealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyHealthKitService.swift; sourceTree = "<group>"; };
-		E153A1D813F21BE9088343DDA897A22B /* GraphDrawable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphDrawable.swift; sourceTree = "<group>"; };
 		E300FC5266AAC4C506EBE53C9422703F /* RecentDustInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentDustInfo.swift; sourceTree = "<group>"; };
 		E31C4C9826AA208B5039678B0CF3E819 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		E385A65D662A4BFBB6BB8E47ABEE5D08 /* FeedbackImportance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackImportance.swift; sourceTree = "<group>"; };
@@ -339,6 +334,7 @@
 		EE6287CE8EC60C4A3AD1C4B219CEF3F5 /* MockHealthKitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockHealthKitManager.swift; sourceTree = "<group>"; };
 		F0EEF6CA663FB1EF90120C8A9B575DAE /* FeedbackSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackSectionModel.swift; sourceTree = "<group>"; };
 		F1ACC2DAD57E26225CB1C2E0570AE3A0 /* Pods-FineDust.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FineDust.debug.xcconfig"; path = "Target Support Files/Pods-FineDust/Pods-FineDust.debug.xcconfig"; sourceTree = "<group>"; };
+		F7B5E72C1E6D74A8FDBB023242361E8D /* RatioPieGraphViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatioPieGraphViewModel.swift; sourceTree = "<group>"; };
 		F7F87D198B2C30E7A31DD677DEBF129E /* FeedbackRecommendationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedbackRecommendationCell.swift; path = FineDust/Sources/Views/FeedbackRecommendationCell.swift; sourceTree = SOURCE_ROOT; };
 		F9F2BB0D542755B411571DD19E3064C3 /* Banner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banner.swift; sourceTree = "<group>"; };
 		FA1BA0F78A7CE3C7FF664CFD9D7EA5E1 /* TestDustManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDustManager.swift; sourceTree = "<group>"; };
@@ -648,6 +644,8 @@
 				5C8A730DB7782A83FA510C8754FC0A5F /* HomeViewModel.swift */,
 				216CFA143F79CB3135E513EDC03AE6B3 /* IntakeSpeechBubbleViewModel.swift */,
 				FC6C2967B7C3D21BC2FC11B6BF67CFFB /* RatioGraphViewModel.swift */,
+				F7B5E72C1E6D74A8FDBB023242361E8D /* RatioPieGraphViewModel.swift */,
+				3C70E57BBFC8185B4F921092004E0DC8 /* RatioStickGraphViewModel.swift */,
 				8FD59CF2C0E97CB42038AD58E0F984AA /* StatisticsViewModel.swift */,
 				902D946B87853D4E2AD9B410E55D3F5D /* StickGraphViewModel.swift */,
 			);
@@ -719,10 +717,6 @@
 		A3E75FE757A21AAA98EA3FF0820CC0E2 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				E153A1D813F21BE9088343DDA897A22B /* GraphDrawable.swift */,
-				9937D9F1DAE246941C851EC4D471E4EC /* IntakeRequestable.swift */,
-				ACADE03E303DFD70F1FE5837C0FBEE19 /* RatioGraphViewDataSource.swift */,
-				7AB47E3C0978FF98F41652103AD28A53 /* StickGraphViewDataSource.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -1033,7 +1027,6 @@
 				54C189CDAC02D1A5A5F542C65DC100EF /* GeoConverter.swift in Sources */,
 				B63E40A9DEE2E2348C4403569CBB1355 /* GeocodeService.swift in Sources */,
 				CA9E1E6429E34A3756F559BF7DD73F52 /* GeocodeServiceType.swift in Sources */,
-				5001A870754216162BAAEF6702256CFE /* GraphDrawable.swift in Sources */,
 				A36615F0BB7BAB9ABC3FBEAF3A1E5E2E /* HealthKitError.swift in Sources */,
 				945A3D8C4CB4966671A4751FFEEE6E64 /* HealthKitHourInterval.swift in Sources */,
 				99B44785CAA5D121CC18FB84EEA3EB4A /* HealthKitObserver.swift in Sources */,
@@ -1048,7 +1041,6 @@
 				6C02BFB6920B35B93E26012BD367A2C2 /* IntakeData.swift in Sources */,
 				5F7F14AD68B8D0138C22DAB78847B18A /* IntakeGrade.swift in Sources */,
 				76AA4D51980AE51FE65E04CEF40ED5C8 /* IntakeModel.swift in Sources */,
-				67F21761F8051318A882D67DB98307FF /* IntakeRequestable.swift in Sources */,
 				13E540EDB5930CDBF14AFDFB32FD1E59 /* IntakeService.swift in Sources */,
 				1B59B6701D7E0BFE326B778CE99DB8E3 /* IntakeServiceType.swift in Sources */,
 				0EDBF5776E0688B6FDC07F146A197E27 /* IntakeSpeechBubbleView.swift in Sources */,
@@ -1063,16 +1055,16 @@
 				4DF2C48B18B20BDC1056BF7A02847916 /* PersistenceService.swift in Sources */,
 				A3D5707F04BB2E8146CA36BD24D7F028 /* PersistenceServiceType.swift in Sources */,
 				457A3FDD032B08E33394487C8A643A13 /* RatioGraphView.swift in Sources */,
-				55C97458A7D103F88156CA664B27D6C9 /* RatioGraphViewDataSource.swift in Sources */,
 				3B864DD60B19879B6C31AAA8EDEEB764 /* RatioGraphViewModel.swift in Sources */,
 				FF247490686ADB14BAA2067689606D9E /* RatioPieGraphView.swift in Sources */,
+				CE028C13EFC21E343325F417E8813629 /* RatioPieGraphViewModel.swift in Sources */,
 				5FE70103F3EEB6C2D9D5FEA6DE108E01 /* RatioStickGraphView.swift in Sources */,
+				894BE58244F853CEA4EB9AA969706029 /* RatioStickGraphViewModel.swift in Sources */,
 				22F48C429DB679A5F46BD063AEF75A0F /* RecentDustInfo.swift in Sources */,
 				56BF4E6D6AFAB5570866F173C2E45AFA /* SharedInfo.swift in Sources */,
 				24F4ACCB4A79BC9C89B6C27D96269A15 /* StatisticsViewController.swift in Sources */,
 				77130D858ACB8EB21C6C68BE1CFEE9FB /* StatisticsViewModel.swift in Sources */,
 				8C20248B736CF39A0DD48D333D6C7193 /* StickGraphView.swift in Sources */,
-				8A73C618AD4EF8A0E2A8D4926464AC76 /* StickGraphViewDataSource.swift in Sources */,
 				60B6B93F880A1B9A5DE40E6B401FDA52 /* StickGraphViewModel.swift in Sources */,
 				FD55170F1110A963D335D8AD164C0A16 /* Storyboard.swift in Sources */,
 				8D77A5561A1746147A27E6714A1A3DF3 /* String+.swift in Sources */,

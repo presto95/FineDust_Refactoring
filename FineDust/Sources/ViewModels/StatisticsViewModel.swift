@@ -61,15 +61,22 @@ extension StatisticsViewModel {
 
 private extension StatisticsViewModel {
   
-  func requestIntake() {
-    intakeService.requestIntakesInWeek()
-      .subscribe(
-        onNext: { dustIntakes in
-          <#code#>
-      },
-        onError: { error in
-        <#code#>
+  func requestIntake() -> Observable<IntakeData> {
+    let todayIntakeObservable = intakeService.todayIntake()
+    let weekIntakeObservable = intakeService.weekIntake()
+    return Observable
+      .zip(todayIntakeObservable, weekIntakeObservable) { todayIntake, weekIntake in
+        IntakeData(weekDust: weekIntake, todayDust: todayIntake)
+      }
+      .do(onNext: { intakeData in
+        let weekIntake = intakeData.weekDust
+        let todayIntake = intakeData.todayDust
+        let fineDust = [weekIntake.map { $0.fineDust }, [todayIntake.fineDust]].flatMap { $0 }
+        let ultraFineDust
+          = [weekIntake.map { $0.ultraFineDust }, [todayIntake.ultraFineDust]].flatMap { $0 }
+        let intakes = zip(fineDust, ultraFineDust)
+          .map { DustPair(fineDust: $0, ultraFineDust: $1) }
+        self.persistenceService.saveLastWeekIntake(intakes)
       })
-      .disposed(by: disposeBag)
   }
 }

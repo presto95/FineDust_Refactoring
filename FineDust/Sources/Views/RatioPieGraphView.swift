@@ -8,6 +8,9 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
+
 final class RatioPieGraphView: UIView {
   
   private enum Layer {
@@ -15,35 +18,19 @@ final class RatioPieGraphView: UIView {
     static let lineWidth: CGFloat = 10.0
   }
   
+  private let disposeBag = DisposeBag()
+  
+  fileprivate let viewModel = RatioPieGraphViewModel()
+  
   @IBOutlet private weak var percentLabel: UILabel!
   
-  private var ratio: Double = 0
-  
-  private var endAngle: Double = 0
+  override func awakeFromNib() {
+    super.awakeFromNib()
+    bindViewModel()
+  }
   
   func setup(ratio: Double, endAngle: Double) {
-    self.ratio = ratio
-    self.endAngle = endAngle
-    reloadGraphView()
-  }
-}
-
-// MARK: - Implement GraphDrawable
-
-extension RatioPieGraphView: GraphDrawable {
-  
-  func deinitializeSubviews() {
-    layer.sublayers?.forEach { $0.removeFromSuperlayer() }
-  }
-  
-  func drawGraph() {
-    addCircleLayers()
-  }
-  
-  func setLabels() {
-    let percent = Int(ratio * 100)
-    percentLabel.text = "\(percent)%"
-    addSubview(percentLabel) { $0.center.equalTo(snp.center) }
+    viewModel.setValues(ratio: ratio, endAngle: endAngle)
   }
 }
 
@@ -51,9 +38,30 @@ extension RatioPieGraphView: GraphDrawable {
 
 private extension RatioPieGraphView {
   
-  func addCircleLayers() {
+  func bindViewModel() {
+    let valuesUpdatedDrivder = viewModel.valuesUpdated.asDriver(onErrorJustReturn: (0, 0))
+    
+    valuesUpdatedDrivder
+      .map { "\($0.ratio * 100)" }
+      .drive(percentLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    valuesUpdatedDrivder
+      .drive(onNext: { [weak self] ratio, endAngle in
+        guard let self = self else { return }
+        // deinitializeSubviews
+        self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+        // drawGraph
+        self.addCircleLayers(ratio: ratio)
+        // setLabels
+        self.addSubview(self.percentLabel) { $0.center.equalTo(self.snp.center) }
+      })
+      .disposed(by: disposeBag)
+  }
+  
+  func addCircleLayers(ratio: Double) {
     layer.addSublayer(makeEntireShapeLayer())
-    layer.addSublayer(makePortionShapeLayer())
+    layer.addSublayer(makePortionShapeLayer(ratio: ratio))
   }
   
   func makeEntireShapeLayer() -> CAShapeLayer {
@@ -62,7 +70,7 @@ private extension RatioPieGraphView {
     return shapeLayer
   }
   
-  func makePortionShapeLayer() -> CAShapeLayer {
+  func makePortionShapeLayer(ratio: Double) -> CAShapeLayer {
     let shapeLayer = makeCircleLayer(fillColor: .clear,
                                      strokeColor: Asset.graphToday.color,
                                      strokeEnd: CGFloat(ratio),
@@ -95,5 +103,16 @@ private extension RatioPieGraphView {
       $0.path = path.cgPath
     }
     return shapeLayer
+  }
+}
+
+// MARK: - Reactive Extension
+
+extension Reactive where Base: RatioPieGraphView {
+  
+  var setup: Binder<(ratio: Double, endAngle: Double)> {
+    return .init(base) { target, values in
+      target.viewModel.setValues(ratio: values.ratio, endAngle: values.endAngle)
+    }
   }
 }

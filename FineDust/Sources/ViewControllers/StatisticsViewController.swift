@@ -64,14 +64,22 @@ final class StatisticsViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    setupSubviews()
-    createGraphViews()
-    registerLocationObserver()
+    bindViewModel()
+    scrollView.contentInset = .init(top: 8, left: 0, bottom: 16, right: 0)
+    stickGraphBackgroundView.layer.applyBorder(color: Asset.graphBorder.color,
+                                               width: Layer.borderWidth,
+                                               radius: Layer.cornerRadius)
+    ratioGraphBackgroundView.layer.applyBorder(color: Asset.graphBorder.color,
+                                               width: Layer.borderWidth,
+                                               radius: Layer.cornerRadius)
+    stickGraphBackgroundView.addSubview(stickGraphBackgroundView) { $0.edges.equalToSuperview() }
+    ratioGraphBackgroundView.addSubview(ratioGraphBackgroundView) { $0.edges.equalToSuperview() }
   }
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    initializeGraphViews()
+    stickGraphView.setup()
+    ratioGraphView.setup()
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -81,10 +89,6 @@ final class StatisticsViewController: UIViewController {
       isPresented.toggle()
       requestIntake(completion: requestIntakeHandler)
     }
-  }
-  
-  deinit {
-    unregisterLocationObserver()
   }
   
   func bindViewModel() {
@@ -97,7 +101,14 @@ final class StatisticsViewController: UIViewController {
     viewModel.selectedSegmentedControlIndex.asDriver(onErrorJustReturn: 0)
       .distinctUntilChanged()
       .drive(onNext: { [weak self] index in
-        self?.initializeGraphViews()
+        stickGraphView.setup()
+        ratioGraphView.setup()
+      })
+      .disposed(by: disposeBag)
+    
+    LocationObserver.shared.didSuccess.asDriver(onErrorJustReturn: Void())
+      .drive(onNext: { [weak self] _ in
+        
       })
       .disposed(by: disposeBag)
   }
@@ -173,7 +184,7 @@ extension StatisticsViewController: RatioGraphViewDataSource {
   }
 }
 
-// MARK: - Private Extension (Data)
+// MARK: - Private Method
 
 private extension StatisticsViewController {
   
@@ -195,34 +206,5 @@ private extension StatisticsViewController {
         }
       }
     }
-  }
-}
-
-// MARK: - Private Extension (View)
-
-private extension StatisticsViewController {
-  
-  func setupSubviews() {
-    scrollView.contentInset = .init(top: 8, left: 0, bottom: 16, right: 0)
-    stickGraphBackgroundView.layer.applyBorder(color: Asset.graphBorder.color,
-                                               width: Layer.borderWidth,
-                                               radius: Layer.cornerRadius)
-    ratioGraphBackgroundView.layer.applyBorder(color: Asset.graphBorder.color,
-                                               width: Layer.borderWidth,
-                                               radius: Layer.cornerRadius)
-  }
-  
-  /// 서브뷰 생성하여 프로퍼티에 할당.
-  func createGraphViews() {
-    stickGraphView.dataSource = self
-    ratioGraphView.dataSource = self
-    stickGraphBackgroundView.addSubview(stickGraphBackgroundView) { $0.edges.equalToSuperview() }
-    ratioGraphBackgroundView.addSubview(ratioGraphBackgroundView) { $0.edges.equalToSuperview() }
-  }
-  
-  /// 모든 그래프 뷰 초기화.
-  func initializeGraphViews() {
-    stickGraphView.setup()
-    ratioGraphView.setup()
   }
 }

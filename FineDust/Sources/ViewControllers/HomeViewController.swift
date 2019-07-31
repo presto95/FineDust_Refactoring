@@ -86,48 +86,27 @@ final class HomeViewController: UIViewController {
     viewModel.distance
       .bind(to: infoView.rx.distance)
       .disposed(by: disposeBag)
-}
-
-// MARK: - LocationObserver
-
-extension HomeViewController: LocationObserver {
-  
-  func handleIfSuccess(_ notification: Notification) {
-    updateAPIInfo()
-  }
-  
-  /// 데이터를 받아오는데 문제가 있으면 코어데이터에 마지막으로 저장된 값을 불러옴.
-  func handleIfFail(_ notification: Notification) {
-    if let error = notification.locationTaskError {
-      coreDataService.requestLastSavedData { lastSaveData, error in
-        if let data = lastSaveData {
-          DispatchQueue.main.async {
-            self.fineDustSpeechBalloonView.rx.value.onNext(data.todayFineDust)
-            self.ultraFineDustSpeechBalloonView.rx.value.onNext(data.todayUltraFineDust)
-            self.fineDustImageView.image
-              = UIImage(named: IntakeGrade(intake: data.todayFineDust + data.todayUltraFineDust)
-                .imageName)
-            
-            self.locationLabel.text = data.address
-            self.gradeLabel.text = DustGrade(rawValue: data.grade)?.description
-            self.fineDustLabel.text = "\(data.recentFineDust)μg"
-          }
-        }
-      }
-      errorLog(error.localizedDescription)
-      Banner.show(title: error.localizedDescription)
-    }
-    updateHealthKitInfo()
-  }
-}
-
-// MARK: - HealthKitAuthorizationObserver
-
-extension HomeViewController: HealthKitAuthorizationObserver {
-  
-  func authorizationSharingAuthorized(_ notification: Notification) {
-    updateHealthKitInfo()
-    updateAPIInfo()
+    
+    LocationObserver.shared.didSuccess.asDriver(onErrorJustReturn: Void())
+      .drive(onNext: { _ in
+        updateAPIInfo()
+      })
+      .disposed(by: disposeBag)
+    
+    LocationObserver.shared.didError.asDriver(onErrorJustReturn: NSError(domain: "", code: 0, userInfo: nil))
+      .drive(onNext: { _ in
+        self.viewModel.fetchLastSavedData()
+        updateHealthKitInfo
+      })
+      .disposed(by: disposeBag)
+    
+    HealthKitObserver.shared.authorized.asDriver()
+      .filter { $0 }
+      .drive(onNext: { _ in
+        updateHealthKitInfo()
+        updateAPIInfo()
+      })
+      .disposed(by: disposeBag)
   }
 }
 
@@ -280,7 +259,7 @@ extension HomeViewController {
                 = UIImage(named: IntakeGrade(intake: fineDust + ultrafineDust).imageName)
               self.fineDustSpeechBalloonView.rx.value.onNext(fineDust)
               self.ultraFineDustSpeechBalloonView.rx.value.onNext(ultrafineDust)
-
+              
             }
           }
         }
@@ -342,7 +321,7 @@ private extension HomeViewController {
     return alert
   }
   
-  private func flipFineDustImageView() {
+  func flipFineDustImageView() {
     timer?.invalidate()
     timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
       guard let identity = self?.fineDustImageView.transform.isIdentity else { return }
@@ -355,3 +334,4 @@ private extension HomeViewController {
     timer?.fire()
   }
 }
+

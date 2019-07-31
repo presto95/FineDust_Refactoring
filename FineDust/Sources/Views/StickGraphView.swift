@@ -30,10 +30,12 @@ final class StickGraphView: UIView {
     
     static let springVelocity: CGFloat = 0.5
     
-    static let options: UIView.AnimationOptions = [.curveEaseInOut]
+    static let options: UIView.AnimationOptions = .curveEaseInOut
   }
   
-  weak var dataSource: StickGraphViewDataSource?
+  private let disposeBag = DisposeBag()
+  
+  fileprivate let viewModel = StickGraphViewModel()
   
   @IBOutlet private weak var titleLabel: UILabel!
   
@@ -45,14 +47,33 @@ final class StickGraphView: UIView {
 
   @IBOutlet private var dayLabels: [UILabel]!
   
+  override func awakeFromNib() {
+    super.awakeFromNib()
+    for (index, view) in graphViews.enumerated() {
+      view.layer.applyBorder(radius: Layer.radius)
+      view.backgroundColor = graphBackgroundColor(at: index)
+    }
+  }
+  
+  func setup() {
+    initializeHeights()
+    animateHeights()
+    setUnitLabels()
+    setDayLabelsTitle()
+    setDateLabel()
+  }
+}
+
+// MARK: - Computed Property
+
+extension StickGraphView {
   
   private var intakeAmounts: [Int] {
     return dataSource?.intakes ?? []
   }
   
   private var maxIntakeAmount: Int {
-    let max = intakeAmounts.max() ?? 1
-    return max
+    return intakeAmounts.max() ?? 1
   }
   
   private var intakeRatios: [Double] {
@@ -75,37 +96,6 @@ final class StickGraphView: UIView {
     reversed.removeLast()
     reversed.append("오늘")
     return reversed
-  }
-  
-  override func awakeFromNib() {
-    super.awakeFromNib()
-    for (index, view) in graphViews.enumerated() {
-      view.layer.applyBorder(radius: Layer.radius)
-      view.backgroundColor = graphBackgroundColor(at: index)
-    }
-  }
-  
-  func setup() {
-    reloadGraphView()
-  }
-}
-
-// MARK: - Implement GraphDrawable
-
-extension StickGraphView: GraphDrawable {
-  
-  func deinitializeSubviews() {
-    initializeHeights()
-  }
-  
-  func drawGraph() {
-    animateHeights()
-  }
-  
-  func setLabels() {
-    setUnitLabels()
-    setDayLabelsTitle()
-    setDateLabel()
   }
 }
 
@@ -146,7 +136,7 @@ private extension StickGraphView {
   }
   
   func setDateLabel() {
-    dateLabel.text = DateFormatter.dateDay.string(from: Date())
+    dateLabel.text = DateFormatter.dateDay.string(from: .init())
   }
   
   func graphBackgroundColor(at index: Int) -> UIColor {
@@ -154,5 +144,17 @@ private extension StickGraphView {
       return Asset.graphToday.color
     }
     return index.isMultiple(of: 2) ? Asset.graph1.color : Asset.graph2.color
+  }
+}
+
+// MARK: - Reactive Extension
+
+extension Reactive where Base: StickGraphView {
+  
+  /// 오늘의 이전 날부터 일주일간의 흡입량.
+  var intakes: Binder<[Int]> {
+    return .init(base) { target, intakes in
+      target.viewModel.setIntakes(intakes)
+    }
   }
 }
