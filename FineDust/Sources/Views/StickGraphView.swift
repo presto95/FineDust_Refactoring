@@ -49,53 +49,11 @@ final class StickGraphView: UIView {
   
   override func awakeFromNib() {
     super.awakeFromNib()
+    bindViewModel()
     for (index, view) in graphViews.enumerated() {
       view.layer.applyBorder(radius: Layer.radius)
       view.backgroundColor = graphBackgroundColor(at: index)
     }
-  }
-  
-  func setup() {
-    initializeHeights()
-    animateHeights()
-    setUnitLabels()
-    setDayLabelsTitle()
-    setDateLabel()
-  }
-}
-
-// MARK: - Computed Property
-
-extension StickGraphView {
-  
-  private var intakeAmounts: [Int] {
-    return dataSource?.intakes ?? []
-  }
-  
-  private var maxIntakeAmount: Int {
-    return intakeAmounts.max() ?? 1
-  }
-  
-  private var intakeRatios: [Double] {
-    return intakeAmounts
-      .map { 1.0 - Double($0) / Double(maxIntakeAmount) }
-      .map { !$0.canBecomeMultiplier ? 0.01 : $0 }
-  }
-  
-  private var axisTexts: [String] {
-    return ["\(Int(maxIntakeAmount))", "\(Int(maxIntakeAmount / 2))", "0"]
-  }
-  
-  private var dayTexts: [String] {
-    let dateFormatter = DateFormatter.day
-    var array = [Date](repeating: .init(), count: 7)
-    for (index, element) in array.enumerated() {
-      array[index] = element.before(days: index)
-    }
-    var reversed = Array(array.map { dateFormatter.string(from: $0) }.reversed())
-    reversed.removeLast()
-    reversed.append("오늘")
-    return reversed
   }
 }
 
@@ -103,40 +61,51 @@ extension StickGraphView {
 
 private extension StickGraphView {
   
-  func initializeHeights() {
-    for graphView in graphViews {
-      graphView.snp.updateConstraints { $0.height.equalTo(1) }
-    }
-    layoutIfNeeded()
-  }
-  
-  func animateHeights() {
-    for (index, ratio) in intakeRatios.enumerated() {
-      UIView.animate(
-        withDuration: Animation.duration,
-        delay: Animation.delay,
-        usingSpringWithDamping: Animation.damping,
-        initialSpringVelocity: Animation.springVelocity,
-        options: Animation.options,
-        animations: { [weak self] in
-          self?.graphViews[index].snp.updateConstraints { $0.height.equalTo(ratio) }
-          self?.layoutIfNeeded()
-        },
-        completion: nil
-      )
-    }
-  }
-  
-  func setUnitLabels() {
-    zip(unitLabels, axisTexts).forEach { $0.text = $1 }
-  }
-  
-  func setDayLabelsTitle() {
-    zip(dayLabels, dayTexts).forEach { $0.text = $1 }
-  }
-  
-  func setDateLabel() {
-    dateLabel.text = DateFormatter.dateDay.string(from: .init())
+  func bindViewModel() {
+    viewModel.intakeRatios.asDriver(onErrorJustReturn: [])
+      .do(onNext: { _ in
+        for graphView in self.graphViews {
+          graphView.snp.updateConstraints { $0.height.equalTo(1) }
+        }
+        self.layoutIfNeeded()
+      })
+      .drive(onNext: { ratios in
+        for (index, ratio) in ratios.enumerated() {
+          UIView.animate(
+            withDuration: Animation.duration,
+            delay: Animation.delay,
+            usingSpringWithDamping: Animation.damping,
+            initialSpringVelocity: Animation.springVelocity,
+            options: Animation.options,
+            animations: { [weak self] in
+              self?.graphViews[index].snp.updateConstraints { $0.height.equalTo(ratio) }
+              self?.layoutIfNeeded()
+            },
+            completion: nil
+          )
+        }
+      })
+      .disposed(by: disposeBag)
+    
+    viewModel.axisTexts
+      .withLatestFrom(Observable.just(unitLabels)) { ($0, $1) }
+      .asDriver(onErrorJustReturn: ([], []))
+      .drive(onNext: { texts, labels in
+        zip(texts, labels).forEach { $1.text = $0 }
+      })
+      .disposed(by: disposeBag)
+    
+    viewModel.dayTexts
+      .withLatestFrom(Observable.just(unitLabels)) { ($0, $1) }
+      .asDriver(onErrorJustReturn: ([], []))
+      .drive(onNext: { texts, labels in
+        zip(texts, labels).forEach { $1.text = $0 }
+      })
+      .disposed(by: disposeBag)
+    
+    viewModel.date.asDriver(onErrorJustReturn: "")
+      .drive(dateLabel.rx.text)
+      .disposed(by: disposeBag)
   }
   
   func graphBackgroundColor(at index: Int) -> UIColor {

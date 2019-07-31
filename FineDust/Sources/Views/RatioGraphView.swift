@@ -14,8 +14,6 @@ import SnapKit
 
 final class RatioGraphView: UIView {
   
-  weak var dataSource: RatioGraphViewDataSource?
-  
   private let disposeBag = DisposeBag()
   
   fileprivate let viewModel = RatioGraphViewModel()

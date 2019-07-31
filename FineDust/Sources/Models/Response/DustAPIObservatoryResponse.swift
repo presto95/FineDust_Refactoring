@@ -38,6 +38,9 @@ struct DustAPIObservatoryResponse: DustAPIResponseType {
                      totalCount: bodyNode["totalCount"].value(),
                      items: bodyNode["items"]["item"].value())
   }
+}
+
+extension DustAPIObservatoryResponse {
   
   var observatory: String? {
     return items.first?.observatory

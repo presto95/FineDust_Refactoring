@@ -118,9 +118,7 @@ final class DustAPIService: DustAPIServiceType {
             for item in items {
               let (hour, _) = self.hourInDustDate(item.dataTime)
               let currentReferenceDate = self.referenceDate(item.dataTime)
-              // 구간 내에 포함되지 않는다면 해당 데이터는 필요 없으므로 컨티뉴
               if !(startDate.start...endDate.start).contains(currentReferenceDate) { continue }
-              // 시작 날짜의 전날 시작 날짜와 현재 요소의 시작 날짜가 같으면 필요한 처리를 다 한 것이므로 브레이크
               if startDate.before(days: 1).start == currentReferenceDate { break }
               hourlyFineDustIntakePerDate.padIntakeOrEmpty(
                 date: currentReferenceDate,

@@ -15,7 +15,7 @@ final class FeedbackListCell: UITableViewCell {
   
   private let disposeBag = DisposeBag()
   
-  fileprivate let viewModel = FeedbackCellModel()
+  fileprivate let viewModel = FeedbackListCellModel()
   
   @IBOutlet private weak var feedbackImageView: UIImageView!
   
@@ -30,8 +30,9 @@ final class FeedbackListCell: UITableViewCell {
   override func awakeFromNib() {
     super.awakeFromNib()
     bindViewModel()
-    feedbackImageView.layer
-      .applyBorder(color: .clear, width: 0, radius: feedbackImageView.bounds.height / 2)
+    feedbackImageView.layer.applyBorder(color: .clear,
+                                        width: 0,
+                                        radius: feedbackImageView.bounds.height / 2)
   }
   
   override func prepareForReuse() {
@@ -40,17 +41,11 @@ final class FeedbackListCell: UITableViewCell {
   }
   
   func configure(with feedbackContents: FeedbackContents) {
-    feedbackImageView.image = UIImage(named: feedbackContents.imageName)?.resize(newWidth: 150)
-    titleLabel.text = feedbackContents.title
-    sourceLabel.text = feedbackContents.source
-    dateLabel.text = feedbackContents.date
+    viewModel.setFeedbackContents(feedbackContents)
   }
   
-  func setBookmarkButtonState(isBookmarkedByTitle: [String: Bool]) {
-    let isBookmarked = isBookmarkedByTitle[title] ?? false
-    bookmarkButton.imageView?.image
-      = isBookmarked ? Asset.yellowStar.image : Asset.starOutline.image
-    bookmarkButton.isSelected = isBookmarked
+  func setBookmarkButtonState(_ isBookmarked: Bool) {
+    viewModel.setIsBookmarked(isBookmarked)
   }
 }
 
@@ -63,6 +58,33 @@ private extension FeedbackListCell {
       .drive(onNext: { [weak self] _ in
         self?.viewModel.tapBookmarkButton()
       })
+      .disposed(by: disposeBag)
+    
+    viewModel.imageName.asDriver(onErrorJustReturn: "")
+      .map(UIImage.init)
+      .map { $0?.resize(newWidth: 150) }
+      .drive(feedbackImageView.rx.image)
+      .disposed(by: disposeBag)
+    
+    viewModel.title.asDriver(onErrorJustReturn: "")
+      .drive(titleLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    viewModel.source.asDriver(onErrorJustReturn: "")
+      .drive(sourceLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    viewModel.date.asDriver(onErrorJustReturn: "")
+      .drive(dateLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    viewModel.isbookmarked.asDriver(onErrorJustReturn: false)
+      .map { $0 ? Asset.yellowStar.image : Asset.starOutline.image }
+      .drive(bookmarkButton.rx.image())
+      .disposed(by: disposeBag)
+    
+    viewModel.isbookmarked.asDriver(onErrorJustReturn: false)
+      .drive(bookmarkButton.rx.isSelected)
       .disposed(by: disposeBag)
   }
   

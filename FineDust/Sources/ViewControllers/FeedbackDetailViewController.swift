@@ -39,8 +39,6 @@ final class FeedbackDetailViewController: UIViewController {
   
   var feedbackContents: FeedbackContents?
   
-  // MARK: - Life Cycle
-  
   override func viewDidLoad() {
     super.viewDidLoad()
     bindViewModel()

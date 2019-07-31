@@ -66,28 +66,14 @@ private extension RatioStickGraphView {
     let valueUpdatedDriver = viewModel.intakeValuesUpdated.asDriver(onErrorJustReturn: (0, 0))
     
     valueUpdatedDriver
-      .map { Double($1) / Double($0) * 100 }
-      .map { "\(Int($0))" }
-      .drive(percentLabel.rx.text)
-      .disposed(by: disposeBag)
-    
-    valueUpdatedDriver
-      .map { "\($0.averageIntake)" }
-      .drive(averageIntakeLabel.rx.text)
-      .disposed(by: disposeBag)
-    
-    valueUpdatedDriver
-      .map { "\($0.todayIntake)" }
-      .drive(todayIntakeLabel.rx.text)
-      .disposed(by: disposeBag)
-    
-    valueUpdatedDriver
+      .do(onNext: { [weak self] _ in
+        // deinitializeSubviews
+        self?.averageIntakeGraphView.snp.updateConstraints { $0.height.equalTo(0.01) }
+        self?.todayIntakeGraphView.snp.updateConstraints { $0.height.equalTo(0.01) }
+        self?.layoutIfNeeded()
+      })
       .drive(onNext: { [weak self] averageIntake, todayIntake in
         guard let self = self else { return }
-        // deinitializeSubviews
-        self.averageIntakeGraphView.snp.updateConstraints { $0.height.equalTo(0.01) }
-        self.todayIntakeGraphView.snp.updateConstraints { $0.height.equalTo(0.01) }
-        self.layoutIfNeeded()
         // drawGraph
         let averageIntakeTempMultiplier = averageIntake >= todayIntake
           ? 1
@@ -117,13 +103,24 @@ private extension RatioStickGraphView {
           },
           completion: nil
         )
-        // setLabels
-        let tempRatio = Double(todayIntake) / Double(averageIntake) * 100
-        let ratio = !tempRatio.canBecomeMultiplier ? 0 : tempRatio
-        self.percentLabel.text = "\(Int(ratio))%"
-        self.averageIntakeLabel.text = "\(averageIntake)"
-        self.todayIntakeLabel.text = "\(todayIntake)"
       })
+      .disposed(by: disposeBag)
+    
+    valueUpdatedDriver
+      .map { Double($0.todayIntake) / Double($0.averageIntake) * 100 }
+      .map { !$0.canBecomeMultiplier ? 0 : $0 }
+      .map { "\(Int($0))" }
+      .drive(percentLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    valueUpdatedDriver
+      .map { "\($0.averageIntake)" }
+      .drive(averageIntakeLabel.rx.text)
+      .disposed(by: disposeBag)
+    
+    valueUpdatedDriver
+      .map { "\($0.todayIntake)" }
+      .drive(todayIntakeLabel.rx.text)
       .disposed(by: disposeBag)
   }
 }

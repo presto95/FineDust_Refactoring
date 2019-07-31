@@ -22,31 +22,6 @@ struct DustAPIInfoResponse: DustAPIResponseType {
     
     let ultraFineDustGradeString: String
     
-    var fineDustValue: Int {
-      return Int(fineDustValueString) ?? 0
-    }
-    
-    var fineDustGrade: Int {
-      return Int(fineDustGradeString) ?? 0
-    }
-    
-    var ultraFineDustValue: Int {
-      return Int(ultraFineDustValueString) ?? 0
-    }
-    
-    var ultraFineDustGrade: Int {
-      return Int(ultraFineDustGradeString) ?? 0
-    }
-    
-    var dustValue: DustPair<Int> {
-      return .init(fineDust: fineDustValue, ultraFineDust: ultraFineDustValue)
-    }
-    
-    var dustGrade: DustPair<DustGrade> {
-      return .init(fineDust: DustGrade(rawValue: fineDustGrade) ?? .default,
-                   ultraFineDust: DustGrade(rawValue: ultraFineDustGrade) ?? .default)
-    }
-    
     static func deserialize(_ node: XMLIndexer) throws -> Item {
       return try .init(dataTime: node["dataTime"].value(),
                        fineDustValueString: node["pm10Value"].value(),
@@ -68,5 +43,33 @@ struct DustAPIInfoResponse: DustAPIResponseType {
     return try .init(result: responseNode["header"].value(),
                      totalCount: bodyNode["totalCount"].value(),
                      items: bodyNode["items"]["item"].value())
+  }
+}
+
+extension DustAPIInfoResponse.Item {
+  
+  var fineDustValue: Int {
+    return Int(fineDustValueString) ?? 0
+  }
+  
+  var fineDustGrade: Int {
+    return Int(fineDustGradeString) ?? 0
+  }
+  
+  var ultraFineDustValue: Int {
+    return Int(ultraFineDustValueString) ?? 0
+  }
+  
+  var ultraFineDustGrade: Int {
+    return Int(ultraFineDustGradeString) ?? 0
+  }
+  
+  var dustValue: DustPair<Int> {
+    return .init(fineDust: fineDustValue, ultraFineDust: ultraFineDustValue)
+  }
+  
+  var dustGrade: DustPair<DustGrade> {
+    return .init(fineDust: DustGrade(rawValue: fineDustGrade) ?? .default,
+                 ultraFineDust: DustGrade(rawValue: ultraFineDustGrade) ?? .default)
   }
 }
