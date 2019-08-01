@@ -28,10 +28,6 @@ final class RatioPieGraphView: UIView {
     super.awakeFromNib()
     bindViewModel()
   }
-  
-  func setup(ratio: Double, endAngle: Double) {
-    viewModel.setValues(ratio: ratio, endAngle: endAngle)
-  }
 }
 
 // MARK: - Private Method
@@ -39,18 +35,18 @@ final class RatioPieGraphView: UIView {
 private extension RatioPieGraphView {
   
   func bindViewModel() {
-    let valuesUpdatedDrivder = viewModel.valuesUpdated.asDriver(onErrorJustReturn: (0, 0))
-    
-    valuesUpdatedDrivder
+    viewModel.dataSource.asDriver(onErrorJustReturn: (0, 0))
       .map { "\($0.ratio * 100)" }
       .drive(percentLabel.rx.text)
       .disposed(by: disposeBag)
     
-    valuesUpdatedDrivder
+    viewModel.dataSource.asDriver(onErrorJustReturn: (0, 0))
+      .do(onNext: { [weak self] _ in
+        // deinitializeSubviews
+        self?.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+      })
       .drive(onNext: { [weak self] ratio, endAngle in
         guard let self = self else { return }
-        // deinitializeSubviews
-        self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
         // drawGraph
         self.addCircleLayers(ratio: ratio)
         // setLabels
@@ -110,7 +106,7 @@ private extension RatioPieGraphView {
 
 extension Reactive where Base: RatioPieGraphView {
   
-  var setup: Binder<(ratio: Double, endAngle: Double)> {
+  var dataSource: Binder<(ratio: Double, endAngle: Double)> {
     return .init(base) { target, values in
       target.viewModel.setValues(ratio: values.ratio, endAngle: values.endAngle)
     }

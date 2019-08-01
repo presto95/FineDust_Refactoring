@@ -22,7 +22,7 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oxm-52-siG">
                     <rect key="frame" x="0.0" y="0.0" width="337" height="195.5"/>
                     <subviews>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="{ upper text }" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lpx-yZ-usV">
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="오늘 마신" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lpx-yZ-usV">
                             <rect key="frame" x="16" y="0.0" width="305" height="83"/>
                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -72,7 +72,6 @@
             <connections>
                 <outlet property="balloonImageView" destination="QdT-n5-6CN" id="Kuy-bN-9H4"/>
                 <outlet property="centerLabel" destination="31h-Mj-lgs" id="8ck-1G-fNP"/>
-                <outlet property="upperLabel" destination="Lpx-yZ-usV" id="aRm-iw-6Vq"/>
                 <outlet property="valueLabel" destination="HUg-yK-svc" id="0cU-8m-3Ln"/>
             </connections>
             <point key="canvasLocation" x="76" y="-76.46176911544228"/>

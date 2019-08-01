@@ -11,19 +11,33 @@ import RxSwift
 
 protocol StatisticsViewModelInputs {
   
+  func setPresented()
+  
+  func updateData()
+  
   func selectSegmentedControl(at index: Int)
 }
 
 protocol StatisticsViewModelOutputs {
   
+  var isPresented: Observable<Bool> { get }
+  
   var selectedSegmentedControlIndex: Observable<Int> { get }
+  
+  var intakeData: Observable<IntakeData> { get }
+  
+  var todayDustRatio: Observable<DustPair<Double>> { get }
 }
 
 final class StatisticsViewModel {
   
+  private let disposeBag = DisposeBag()
+  
+  private let isPresentedRelay = BehaviorRelay<Bool>(value: false)
+  
   private let selectedSegmentedControlIndexRelay = BehaviorRelay(value: 0)
   
-  private let disposeBag = DisposeBag()
+  private let intakeDataRelay = PublishRelay<IntakeData>()
   
   private let intakeService: IntakeServiceType
   
@@ -38,6 +52,15 @@ final class StatisticsViewModel {
 
 extension StatisticsViewModel: StatisticsViewModelInputs {
   
+  func setPresented() {
+    isPresentedRelay.accept(true)
+    fetchLastSavedData()
+  }
+  
+  func updateData() {
+    requestIntakeData().bind(to: intakeDataRelay).disposed(by: disposeBag)
+  }
+  
   func selectSegmentedControl(at index: Int) {
     selectedSegmentedControlIndexRelay.accept(index)
   }
@@ -45,23 +68,41 @@ extension StatisticsViewModel: StatisticsViewModelInputs {
 
 extension StatisticsViewModel: StatisticsViewModelOutputs {
   
+  var isPresented: Observable<Bool> {
+    return isPresentedRelay.asObservable()
+  }
+  
   var selectedSegmentedControlIndex: Observable<Int> {
     return selectedSegmentedControlIndexRelay.asObservable()
   }
-}
-
-extension StatisticsViewModel {
   
-  var inputs: StatisticsViewModelInputs { return self }
+  var intakeData: Observable<IntakeData> {
+    return intakeDataRelay.asObservable()
+  }
   
-  var outputs: StatisticsViewModelOutputs { return self }
+  var todayDustRatio: Observable<DustPair<Double>> {
+    return intakeData
+      .map { $0.weekDust }
+      .map { DustPair(fineDust: $0.map { $0.fineDust },
+                      ultraFineDust: $0.map { $0.ultraFineDust }) }
+      .map {
+        let reduced = DustPair(fineDust: $0.fineDust.reduce(0, +),
+                               ultraFineDust: $0.ultraFineDust.reduce(0, +))
+        let sum = DustPair(fineDust: reduced.fineDust == 0 ? 1 : reduced.fineDust,
+                           ultraFineDust: reduced.ultraFineDust == 0 ? 1 : reduced.ultraFineDust)
+        let last = DustPair(fineDust: $0.fineDust.last ?? 1,
+                            ultraFineDust: $0.ultraFineDust.last ?? 1)
+        return DustPair(fineDust: Double(last.fineDust) / Double(sum.fineDust),
+                        ultraFineDust: Double(last.ultraFineDust) / Double(sum.ultraFineDust))
+    }
+  }
 }
 
 // MARK: - Private Method
 
 private extension StatisticsViewModel {
   
-  func requestIntake() -> Observable<IntakeData> {
+  func requestIntakeData() -> Observable<IntakeData> {
     let todayIntakeObservable = intakeService.todayIntake()
     let weekIntakeObservable = intakeService.weekIntake()
     return Observable
@@ -78,5 +119,12 @@ private extension StatisticsViewModel {
           .map { DustPair(fineDust: $0, ultraFineDust: $1) }
         self.persistenceService.saveLastWeekIntake(intakes)
       })
+  }
+  
+  func fetchLastSavedData() {
+    guard let lastSavedData = persistenceService.lastSavedData() else { return }
+    let intakeData = IntakeData(weekDust: lastSavedData.weekDust,
+                                todayDust: lastSavedData.todayDust)
+    intakeDataRelay.accept(intakeData)
   }
 }

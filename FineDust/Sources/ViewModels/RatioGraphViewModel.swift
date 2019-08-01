@@ -53,10 +53,11 @@ extension RatioGraphViewModel: RatioGraphViewModelOutputs {
   
   var pieGraphViewDataSource: Observable<(ratio: Double, endAngle: Double)> {
     return intakeRatioRelay.asObservable()
-      .map { (ratio: $0, endAngle: $0 * 2 * .pi - .pi / 2) }
+      .map { ($0, $0 * 2 * .pi - .pi / 2) }
   }
   
   var stickGraphViewDataSource: Observable<(averageIntake: Int, todayIntake: Int)> {
-    return Observable.zip(totalIntakeRelay.asObservable(), todayIntakeRelay.asObservable()) { ($0, $1) }
+    return Observable
+      .zip(totalIntakeRelay.asObservable(), todayIntakeRelay.asObservable()) { ($0, $1) }
   }
 }

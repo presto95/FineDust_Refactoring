@@ -16,7 +16,7 @@ protocol RatioPieGraphViewModelInputs {
 
 protocol RatioPieGraphViewModelOutputs {
   
-  var valuesUpdated: Observable<(ratio: Double, endAngle: Double)> { get }
+  var dataSource: Observable<(ratio: Double, endAngle: Double)> { get }
 }
 
 final class RatioPieGraphViewModel {
@@ -36,7 +36,7 @@ extension RatioPieGraphViewModel: RatioPieGraphViewModelInputs {
 
 extension RatioPieGraphViewModel: RatioPieGraphViewModelOutputs {
   
-  var valuesUpdated: Observable<(ratio: Double, endAngle: Double)> {
+  var dataSource: Observable<(ratio: Double, endAngle: Double)> {
     return Observable.zip(ratioRelay.asObservable(), endAngleRelay.asObservable()) { ($0, $1) }
   }
 }

@@ -11,7 +11,7 @@ import RxSwift
 
 protocol FeedbackViewModelInputs {
   
-  func setPresented
+  func setPresented()
   
   func tapSettingButton()
   

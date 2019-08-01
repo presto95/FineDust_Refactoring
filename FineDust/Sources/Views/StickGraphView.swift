@@ -12,6 +12,11 @@ import RxCocoa
 import RxSwift
 
 final class StickGraphView: UIView {
+  
+  private enum Graph {
+    
+    static let today: Int = 6
+  }
 
   private enum Layer {
     
@@ -109,7 +114,7 @@ private extension StickGraphView {
   }
   
   func graphBackgroundColor(at index: Int) -> UIColor {
-    if index == 6 {
+    if index == Graph.today {
       return Asset.graphToday.color
     }
     return index.isMultiple(of: 2) ? Asset.graph1.color : Asset.graph2.color
@@ -120,7 +125,6 @@ private extension StickGraphView {
 
 extension Reactive where Base: StickGraphView {
   
-  /// 오늘의 이전 날부터 일주일간의 흡입량.
   var intakes: Binder<[Int]> {
     return .init(base) { target, intakes in
       target.viewModel.setIntakes(intakes)

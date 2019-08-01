@@ -63,9 +63,7 @@ final class RatioStickGraphView: UIView {
 private extension RatioStickGraphView {
   
   func bindViewModel() {
-    let valueUpdatedDriver = viewModel.intakeValuesUpdated.asDriver(onErrorJustReturn: (0, 0))
-    
-    valueUpdatedDriver
+    viewModel.dataSource.asDriver(onErrorJustReturn: (0, 0))
       .do(onNext: { [weak self] _ in
         // deinitializeSubviews
         self?.averageIntakeGraphView.snp.updateConstraints { $0.height.equalTo(0.01) }
@@ -106,19 +104,19 @@ private extension RatioStickGraphView {
       })
       .disposed(by: disposeBag)
     
-    valueUpdatedDriver
+    viewModel.dataSource.asDriver(onErrorJustReturn: (0, 0))
       .map { Double($0.todayIntake) / Double($0.averageIntake) * 100 }
       .map { !$0.canBecomeMultiplier ? 0 : $0 }
       .map { "\(Int($0))" }
       .drive(percentLabel.rx.text)
       .disposed(by: disposeBag)
     
-    valueUpdatedDriver
+    viewModel.dataSource.asDriver(onErrorJustReturn: (0, 0))
       .map { "\($0.averageIntake)" }
       .drive(averageIntakeLabel.rx.text)
       .disposed(by: disposeBag)
     
-    valueUpdatedDriver
+    viewModel.dataSource.asDriver(onErrorJustReturn: (0, 0))
       .map { "\($0.todayIntake)" }
       .drive(todayIntakeLabel.rx.text)
       .disposed(by: disposeBag)
@@ -129,7 +127,7 @@ private extension RatioStickGraphView {
 
 extension Reactive where Base: RatioStickGraphView {
   
-  var setup: Binder<(averageIntake: Int, todayIntake: Int)> {
+  var dataSource: Binder<(averageIntake: Int, todayIntake: Int)> {
     return .init(base) { target, values in
       target.viewModel.setIntakeValues(values.averageIntake, values.todayIntake)
     }

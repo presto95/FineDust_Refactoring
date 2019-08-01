@@ -16,7 +16,7 @@ protocol RatioStickGraphViewModelInputs {
 
 protocol RatioStickGraphViewModelOutputs {
   
-  var intakeValuesUpdated: Observable<(averageIntake: Int, todayIntake: Int)> { get }
+  var dataSource: Observable<(averageIntake: Int, todayIntake: Int)> { get }
 }
 
 final class RatioStickGraphViewModel {
@@ -36,8 +36,8 @@ extension RatioStickGraphViewModel: RatioStickGraphViewModelInputs {
 
 extension RatioStickGraphViewModel: RatioStickGraphViewModelOutputs {
 
-  var intakeValuesUpdated: Observable<(averageIntake: Int, todayIntake: Int)> {
-    return Observable.zip(averageIntakeRelay.asObservable(),
-                          todayIntakeRelay.asObservable()) { ($0, $1) }
+  var dataSource: Observable<(averageIntake: Int, todayIntake: Int)> {
+    return Observable
+      .zip(averageIntakeRelay.asObservable(), todayIntakeRelay.asObservable()) { ($0, $1) }
   }
 }

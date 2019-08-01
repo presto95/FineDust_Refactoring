@@ -26,8 +26,6 @@ final class IntakeSpeechBubbleView: UIView {
   
   @IBOutlet private weak var balloonImageView: UIImageView!
   
-  @IBOutlet private weak var upperLabel: UILabel!
-  
   @IBOutlet private weak var centerLabel: UILabel!
   
   @IBOutlet private weak var valueLabel: UILabel!
@@ -35,7 +33,6 @@ final class IntakeSpeechBubbleView: UIView {
   override func awakeFromNib() {
     super.awakeFromNib()
     bindViewModel()
-    upperLabel.text = "오늘 마신"
   }
 }
 
@@ -66,8 +63,8 @@ private extension IntakeSpeechBubbleView {
 extension Reactive where Base: IntakeSpeechBubbleView {
   
   var dustType: Binder<IntakeSpeechBubbleView.DustType> {
-    return .init(base) { base, dustType in
-      base.viewModel.setDustType(dustType)
+    return .init(base) { target, dustType in
+      target.viewModel.setDustType(dustType)
     }
   }
   
