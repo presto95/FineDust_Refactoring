@@ -101,6 +101,7 @@ final class HealthKitService: HealthKitServiceType {
       let interval = Calendar.current.dateComponents([.day], from: startDate, to: endDate)
       guard let day = interval.day, day >= 0 else {
         observer.onError(NSError(domain: "", code: 0, userInfo: nil))
+        return Disposables.create()
       }
       let semaphore = DispatchSemaphore(value: 0)
       var temp = 0

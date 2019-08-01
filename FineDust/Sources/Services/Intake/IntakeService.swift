@@ -49,8 +49,7 @@ final class IntakeService: IntakeServiceType {
       var ultraFineDustIntakePerDate: [Date: Int] = [:]
       let dates = Date.between(startDate, endDate)
       for date in dates {
-        // 로컬에 저장된 데이터가 없는 경우
-        // 네트워킹 통하여 가져옴
+        // 로컬에 저장된 데이터가 없는 경우 네트워킹 통하여 가져옴
         guard let savedIntake = savedIntakePerDate[date] else {
           self.dustAPIService.dayInfo(from: date, to: endDate)
             .subscribe(
@@ -80,6 +79,7 @@ final class IntakeService: IntakeServiceType {
               observer.onError(error)
             })
             .disposed(by: self.disposeBag)
+          return Disposables.create()
         }
         // 로컬에 저장된 데이터가 있는 경우
         fineDustIntakePerDate[date] = savedIntake.fineDust

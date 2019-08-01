@@ -15,6 +15,10 @@ protocol HomeViewModelInputs {
   
   func setPresented()
   
+  func updateDustData()
+  
+  func updateHealthKitData()
+  
   func tapAuthorizationButton()
   
   func tapHealthAppOpeningButton()
@@ -24,13 +28,15 @@ protocol HomeViewModelInputs {
 
 protocol HomeViewModelOutputs {
   
-  var authorizationButtonTapped: Observable<Void> { get }
+  var isPresented: Observable<Bool> { get }
   
-  var todayFineDustValue: Observable<Int> { get }
+  var authorizationButtonTapped: Observable<(isHealthKitAuthorized: Bool, isLocationAuthorized: Bool)> { get }
   
-  var todayUltraFineDustValue: Observable<Int> { get }
+  var todayIntake: Observable<DustPair<Int>> { get }
   
-  var intakeGrade: Observable<IntakeGrade> { get }
+  var fineDustImageName: Observable<String> { get }
+  
+  var time: Observable<String> { get }
   
   var steps: Observable<Int> { get }
   
@@ -51,6 +57,8 @@ final class HomeViewModel {
   
   private let authorizationButtonTappedRelay = PublishRelay<Void>()
   
+  private let intakeRelay = PublishRelay<DustPair<Int>>()
+  
   private let stepsRelay = PublishRelay<Int>()
   
   private let distanceRelay = PublishRelay<Int>()
@@ -60,10 +68,6 @@ final class HomeViewModel {
   private let gradeRelay = PublishRelay<DustGrade>()
   
   private let recentFineDustValueRelay = PublishRelay<Int>()
-  
-  private let locationObserver = LocationObserver.shared
-  
-  private let healthKitObserver = HealthKitObserver.shared
   
   private let persistenceService: PersistenceServiceType
   
@@ -103,6 +107,16 @@ extension HomeViewModel: HomeViewModelInputs {
     isPresentedRelay.accept(true)
   }
   
+  func updateDustData() {
+    updateRecentDustData()
+    updateTodayIntake()
+  }
+  
+  func updateHealthKitData() {
+    updateSteps()
+    updateDistance()
+  }
+  
   func tapAuthorizationButton() {
     authorizationButtonTappedRelay.accept(Void())
   }
@@ -117,21 +131,33 @@ extension HomeViewModel: HomeViewModelInputs {
 }
 
 extension HomeViewModel: HomeViewModelOutputs {
-
-  var authorizationButtonTapped: Observable<Void> {
+  
+  var isPresented: Observable<Bool> {
+    return isPresentedRelay.asObservable()
+  }
+  
+  var authorizationButtonTapped: Observable<(isHealthKitAuthorized: Bool, isLocationAuthorized: Bool)> {
+    let isHealthKitAuthorized = Observable.just(healthKitService.isAuthorized)
+    let isLocationAuthorized = Observable.just(locationManager.authorizationStatus == .authorizedAlways
+      || locationManager.authorizationStatus == .authorizedWhenInUse)
+    let isAuthorized = Observable.zip(isHealthKitAuthorized, isLocationAuthorized) { ($0, $1) }
+      .map { (isHealthKitAuthorized: $0, isLocationAuthorized: $1) }
     return authorizationButtonTappedRelay.asObservable()
+      .withLatestFrom(isAuthorized)
   }
   
-  var todayFineDustValue: Observable<Int> {
-    
+  var todayIntake: Observable<DustPair<Int>> {
+    return intakeRelay.asObservable()
   }
   
-  var todayUltraFineDustValue: Observable<Int> {
-    
+  var fineDustImageName: Observable<String> {
+    return todayIntake
+      .map { IntakeGrade(rawValue: $0.fineDust + $0.ultraFineDust) ?? .default }
+      .map { $0.imageName }
   }
   
-  var intakeGrade: Observable<IntakeGrade> {
-    
+  var time: Observable<String> {
+    return .just(DateFormatter.time.string(from: .init()))
   }
   
   var steps: Observable<Int> {
@@ -159,14 +185,64 @@ extension HomeViewModel: HomeViewModelOutputs {
 
 private extension HomeViewModel {
   
-  func updateHealthKitData() {
-    healthKitService.todaySteps()
-      .subscribe(onNext: { steps in
-        self.persistenceService.saveLastSteps(Int(steps))
-        self.stepsRelay.accept(Int(steps))
+  func updateRecentDustData() {
+    dustAPIService.recentTimeInfo()
+      .do(onNext: { recentInfo in
+        self.persistenceService.saveLastDustData(address: SharedInfo.shared.address,
+                                                 grade: recentInfo.dustGrade.fineDust.rawValue,
+                                                 recentFineDust: recentInfo.dustValue.fineDust)
+      })
+      .subscribe(
+        onNext: { recentInfo in
+          self.addressRelay.accept(SharedInfo.shared.address)
+          self.recentFineDustValueRelay.accept(recentInfo.dustValue.fineDust)
+          self.gradeRelay.accept(recentInfo.dustGrade.fineDust)
       }, onError: { error in
         // Todo: error handling
+        Log.error(error)
+      })
+      .disposed(by: disposeBag)
+  }
+  
+  func updateTodayIntake() {
+    intakeService.todayIntake()
+      .do(onNext: { todayIntake in
+        self.persistenceService.saveLastTodayIntake(todayIntake)
+      })
+      .subscribe(
+        onNext: { todayIntake in
+          self.intakeRelay.accept(todayIntake)
+      }, onError: { error in
+        // Todo: error handling
+        Log.error(error)
+      })
+      .disposed(by: disposeBag)
+  }
+  
+  func updateSteps() {
+    healthKitService.todaySteps()
+      .do(onNext: { steps in self.persistenceService.saveLastSteps(Int(steps)) })
+      .subscribe(
+        onNext: { steps in
+          self.stepsRelay.accept(Int(steps))
+      }, onError: { error in
+        // Todo: error handling
+        Log.error(error)
         self.stepsRelay.accept(0)
+      })
+      .disposed(by: disposeBag)
+  }
+  
+  func updateDistance() {
+    healthKitService.todayDistance()
+      .do(onNext: { distance in self.persistenceService.saveLastDistance(distance) })
+      .subscribe(
+        onNext: { distance in
+          self.distanceRelay.accept(Int(distance))
+      }, onError: { error in
+        // Todo: error handling
+        Log.error(error)
+        self.distanceRelay.accept(0)
       })
       .disposed(by: disposeBag)
   }
