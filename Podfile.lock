@@ -1,6 +1,5 @@
 PODS:
   - Alamofire (4.8.2)
-  - Carte (2.2.0)
   - Differentiator (4.0.1)
   - MarqueeLabel (4.0.0)
   - Moya (13.0.1):
@@ -44,7 +43,6 @@ PODS:
   - Then (2.5.0)
 
 DEPENDENCIES:
-  - Carte
   - Moya
   - NotificationBannerSwift
   - RealmSwift
@@ -61,7 +59,6 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
-    - Carte
     - Differentiator
     - MarqueeLabel
     - Moya
@@ -83,7 +80,6 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
-  Carte: bca44c5112fac5866c2fa3da9fa018fa54eb8ba7
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   MarqueeLabel: b55b26e690b6ad41faedd95cbf5eae6f1d1735b4
   Moya: f4a4b80ff2f8a4ffc208dfb31cd91636622fee6e
@@ -103,6 +99,6 @@ SPEC CHECKSUMS:
   SWXMLHash: 87b0006848a548b7f9485b40bc71721b3ae39add
   Then: 0157115e883545c77967b452fe74a1d25fb796e1
 
-PODFILE CHECKSUM: e7911ed5d815d7686f383237cf642dbd989b27e9
+PODFILE CHECKSUM: 7c818305df265bb9bf71b532e5530d7932b82cc0
 
 COCOAPODS: 1.7.3

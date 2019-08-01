@@ -16,7 +16,6 @@ target 'FineDust' do
   pod 'RealmSwift'
   pod 'NotificationBannerSwift'
   pod 'RxDataSources'
-  pod 'Carte'
   pod 'RxCoreLocation'
   pod 'Moya'
 
