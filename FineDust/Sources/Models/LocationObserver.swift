@@ -7,6 +7,7 @@
 //
 
 import RxRelay
+import RxSwift
 
 final class LocationObserver {
   
@@ -14,9 +15,36 @@ final class LocationObserver {
   
   private init() { }
   
-  let didSuccess = PublishRelay<Void>()
+  private let didSuccessRelay = BehaviorRelay<Void?>(value: nil)
   
-  let didError = PublishRelay<Error>()
+  private let didErrorRelay = BehaviorRelay<Error?>(value: nil)
   
-  let didAuthorizationDenied = PublishRelay<Void>()
+  private let didAuthorizationDeniedRelay = BehaviorRelay<Void?>(value: nil)
+}
+
+extension LocationObserver {
+
+  func didSuccess() {
+    didSuccessRelay.accept(Void())
+  }
+  
+  func didError(_ error: Error) {
+    didErrorRelay.accept(error)
+  }
+  
+  func didAuthorizationDenied() {
+    didAuthorizationDeniedRelay.accept(Void())
+  }
+  
+  var success: Observable<Void> {
+    return didSuccessRelay.filterNil()
+  }
+  
+  var error: Observable<Error> {
+    return didErrorRelay.filterNil()
+  }
+  
+  var authorizationDenied: Observable<Void> {
+    return didAuthorizationDeniedRelay.filterNil()
+  }
 }

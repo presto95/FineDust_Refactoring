@@ -10,7 +10,7 @@ import HealthKit
 
 enum HealthKitQuery {
   
-  case steps
+  case stepCount
   
   case distance
 }
@@ -19,7 +19,7 @@ extension HealthKitQuery {
   
   var identifier: HKQuantityTypeIdentifier {
     switch self {
-    case .steps:
+    case .stepCount:
       return .stepCount
     case .distance:
       return .distanceWalkingRunning
@@ -28,7 +28,7 @@ extension HealthKitQuery {
   
   var unit: HKUnit {
     switch self {
-    case .steps:
+    case .stepCount:
       return .count()
     case .distance:
       return .meter()

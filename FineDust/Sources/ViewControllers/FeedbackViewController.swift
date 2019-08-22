@@ -32,22 +32,6 @@ final class FeedbackViewController: UIViewController {
   
   private var dataSource: DataSoruce!
   
-  private let reuseIdentifiers = ["feedbackRecommendationCell", "feedbackListCell"]
-  
-  private var newDustFeedbacks: [FeedbackContents]?
-  
-  private var isBookmarkedByTitle: [String: Bool] = [:]
-  
-  private var recommendFeedbacks: [FeedbackContents] = []
-  
-  private var fineDustIntake: Int = 30
-  
-  private var ultrafineDustIntake: Int = 20
-  
-  private var currentState: IntakeGrade = .good
-  
-  private let sectionToReload: IndexSet = [1]
-  
   override func viewDidLoad() {
     super.viewDidLoad()
     dataSource = .init(configureCell: { [weak self] dataSouce, tableView, indexPath, feedbackItem in

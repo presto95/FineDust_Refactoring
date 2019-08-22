@@ -26,41 +26,40 @@ final class HealthKitService: HealthKitServiceType {
   }
   
   @discardableResult
-  func requestAuthorization() -> Observable<Bool> {
+  func requestAuthorization() -> Single<Result<Bool, Error>> {
     guard let stepCountQuantityType = HKObjectType.quantityType(forIdentifier: .stepCount),
       let distanceQuantityType = HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)
-      else { return .empty() }
+      else { return .just(.failure(HealthKitError.invalidQuery)) }
     return .create { observer in
       let types = Set([stepCountQuantityType, distanceQuantityType])
       self.healthStore.requestAuthorization(toShare: types, read: types) { success, error in
         if let error = error {
-          observer.onError(error)
+          observer(.success(.failure(error)))
         }
-        observer.onNext(success)
-        observer.onCompleted()
+        observer(.success(.success(success)))
       }
       return Disposables.create()
     }
     
   }
   
-  func todaySteps() -> Observable<Double> {
-    return requestHealthKitData(healthKitQuery: .steps,
+  func todayStepCount() -> Single<Result<Double, Error>> {
+    return requestHealthKitData(healthKitQuery: .stepCount,
                                 startDate: .start(),
                                 endDate: .init(),
                                 hourInterval: .day)
-      .map { $0.value }
+      .map { $0.map { $0.value } }
   }
   
-  func todayDistance() -> Observable<Double> {
+  func todayDistance() -> Single<Result<Double, Error>> {
     return requestHealthKitData(healthKitQuery: .distance,
                                 startDate: .start(),
                                 endDate: .init(),
                                 hourInterval: .day)
-      .map { $0.value }
+      .map { $0.map { $0.value } }
   }
   
-  func todayDistancePerHour() -> Observable<[Hour: Int]> {
+  func todayDistancePerHour() -> Single<Result<[Hour: Int], Error>> {
     return .create { observer in
       var hourIntakePair = [Hour: Int]()
       let semaphore = DispatchSemaphore(value: 0)
@@ -69,38 +68,38 @@ final class HealthKitService: HealthKitServiceType {
                                 startDate: .start(),
                                 endDate: .end(),
                                 hourInterval: .onetime)
-        .subscribe(
-          onNext: { value, hour in
-            let value = value < 500 ? 0 : Int(value)
-            let hour = Hour(rawValue: hour) ?? .default
-            hourIntakePair[hour] = value
-            temp += 1
-            if temp == 24 {
-              semaphore.signal()
-            }
-        },
-          onError: { error in
+        .subscribe(onSuccess: { result in
+          if result.failure != nil {
             for hour in Hour.allCases {
               hourIntakePair[hour] = 0
             }
             semaphore.signal()
+            return
+          }
+          guard let success = result.success else { return }
+          let value = success.value < 500 ? 0 : Int(success.value)
+          let hour = Hour(rawValue: success.hour) ?? .default
+          hourIntakePair[hour] = value
+          temp += 1
+          if temp == 24 {
+            semaphore.signal()
+          }
         })
         .disposed(by: self.disposeBag)
       semaphore.wait()
-      observer.onNext(hourIntakePair)
-      observer.onCompleted()
+      observer(.success(.success(hourIntakePair)))
       return Disposables.create()
     }
   }
   
   func todayDistancePerHour(from startDate: Date,
-                            to endDate: Date) -> Observable<[Date: [Hour: Int]]> {
+                            to endDate: Date) -> Single<Result<[Date: [Hour: Int]], Error>> {
     return .create { observer in
       var hourIntakePair = [Hour: Int]()
       var dateHourIntakePair = [Date: [Hour: Int]]()
       let interval = Calendar.current.dateComponents([.day], from: startDate, to: endDate)
       guard let day = interval.day, day >= 0 else {
-        observer.onError(NSError(domain: "", code: 0, userInfo: nil))
+        observer(.success(.failure(HealthKitError.default)))
         return Disposables.create()
       }
       let semaphore = DispatchSemaphore(value: 0)
@@ -111,21 +110,24 @@ final class HealthKitService: HealthKitServiceType {
                                   startDate: indexDate.start,
                                   endDate: indexDate.end,
                                   hourInterval: .onetime)
-          .subscribe(
-            onNext: { value, hour in
-              let value = value < 500 ? 0 : Int(value)
-              hourIntakePair[Hour(rawValue: hour) ?? .default] = value
+          .subscribe(onSuccess: { result in
+            if result.failure != nil {
+              for hour in Hour.allCases {
+                hourIntakePair[hour] = 0
+                temp += 1
+              }
               dateHourIntakePair[indexDate.start] = hourIntakePair
-              temp += 1
               if temp == (day + 1) * 24 {
                 semaphore.signal()
               }
-          }, onError: { error in
-            for hour in Hour.allCases {
-              hourIntakePair[hour] = 0
-              temp += 1
+              return
             }
+            guard let success = result.success else { return }
+            let value = success.value < 500 ? 0 : Int(success.value)
+            let hour = Hour(rawValue: success.hour) ?? .default
+            hourIntakePair[hour] = value
             dateHourIntakePair[indexDate.start] = hourIntakePair
+            temp += 1
             if temp == (day + 1) * 24 {
               semaphore.signal()
             }
@@ -133,8 +135,7 @@ final class HealthKitService: HealthKitServiceType {
           .disposed(by: self.disposeBag)
       }
       semaphore.wait()
-      observer.onNext(dateHourIntakePair)
-      observer.onCompleted()
+      observer(.success(.success(dateHourIntakePair)))
       return Disposables.create()
     }
   }
@@ -144,14 +145,17 @@ final class HealthKitService: HealthKitServiceType {
 
 private extension HealthKitService {
   
-  func requestHealthKitData(healthKitQuery: HealthKitQuery,
-                            startDate: Date,
-                            endDate: Date,
-                            hourInterval: HealthKitHourInterval) -> Observable<(value: Double, hour: Int)> {
+  func requestHealthKitData(
+    healthKitQuery: HealthKitQuery,
+    startDate: Date,
+    endDate: Date,
+    hourInterval: HealthKitHourInterval
+    ) -> Single<Result<(value: Double, hour: Int), Error>> {
     return .create { observer in
       guard let quantityType
         = HKQuantityType.quantityType(forIdentifier: healthKitQuery.identifier) else {
-          observer.onError(HealthKitError.unexpectedIdentifier)
+          observer(.success(.failure(HealthKitError.unexpectedIdentifier)))
+          return Disposables.create()
       }
       let interval = DateComponents(hour: hourInterval.rawValue)
       let predicate = HKQuery.predicateForSamples(withStart: startDate,
@@ -164,26 +168,24 @@ private extension HealthKitService {
                                               intervalComponents: interval)
       query.initialResultsHandler = { query, results, error in
         if error != nil {
-          observer.onError(HealthKitError.invalidQuery)
+          observer(.success(.failure(HealthKitError.invalidQuery)))
         }
         if let results = results {
           if results.statistics().isEmpty {
-            observer.onError(HealthKitError.queryNotSearched)
+            observer(.success(.failure(HealthKitError.queryNotSearched)))
           } else {
             results.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
               let hour = Int(DateFormatter.hour.string(from: statistics.startDate)) ?? 0
               if let quantity = statistics.sumQuantity() {
                 let quantityValue = quantity.doubleValue(for: healthKitQuery.unit)
-                observer.onNext((quantityValue, hour))
-                observer.onCompleted()
+                observer(.success(.success((quantityValue, hour))))
               } else {
-                observer.onNext((0, hour))
-                observer.onCompleted()
+                observer(.success(.success((0, hour))))
               }
             }
           }
         } else {
-          observer.onError(HealthKitError.queryExecutedFailed)
+          observer(.success(.failure(HealthKitError.queryExecutedFailed)))
         }
       }
       return Disposables.create()

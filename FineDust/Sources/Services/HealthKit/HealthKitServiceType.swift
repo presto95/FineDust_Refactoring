@@ -14,15 +14,15 @@ protocol HealthKitServiceType: class {
   
   var isAuthorized: Bool { get }
   
-  func requestAuthorization() -> Observable<Bool>
+  func requestAuthorization() -> Single<Result<Bool, Error>>
   
-  func todaySteps() -> Observable<Double>
+  func todayStepCount() -> Single<Result<Double, Error>>
   
-  func todayDistance() -> Observable<Double>
+  func todayDistance() -> Single<Result<Double, Error>>
   
-  func todayDistancePerHour() -> Observable<[Hour: Int]>
+  func todayDistancePerHour() -> Single<Result<[Hour: Int], Error>>
   
   func todayDistancePerHour(from startDate: Date,
-                            to endDate: Date) -> Observable<[Date: [Hour: Int]]>
+                            to endDate: Date) -> Single<Result<[Date: [Hour: Int]], Error>>
 }
 

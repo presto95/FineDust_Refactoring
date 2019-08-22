@@ -12,11 +12,12 @@ import RxSwift
 
 protocol DustAPIServiceType: class {
   
-  func observatory() -> Observable<String>
+  func observatory() -> Single<Result<String, Error>>
   
-  func recentTimeInfo() -> Observable<RecentDustInfo>
+  func recentTimeInfo() -> Single<Result<RecentDustInfo, Error>>
   
-  func dayInfo() -> Observable<DustPair<[Hour: Int]>>
+  func dayInfo() -> Single<Result<DustPair<[Hour: Int]>, Error>>
   
-  func dayInfo(from startDate: Date, to endDate: Date) -> Observable<DustPair<[Date: [Hour: Int]]>>
+  func dayInfo(from startDate: Date,
+               to endDate: Date) -> Single<Result<DustPair<[Date: [Hour: Int]]>, Error>>
 }

@@ -27,7 +27,9 @@ final class Banner: BannerType {
 
 extension Reactive where Base: Banner {
   
-  func show(title: String?, subtitle: String? = nil, style: BannerStyle = .success) -> Binder<Void> {
+  func show(title: String?,
+            subtitle: String? = nil,
+            style: BannerStyle = .success) -> Binder<Void> {
     return .init(base) { target, _ in
       target.show(title: title, subtitle: subtitle, style: style)
     }

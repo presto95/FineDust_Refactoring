@@ -7,6 +7,7 @@
 //
 
 import RxRelay
+import RxSwift
 
 final class HealthKitObserver {
   
@@ -14,5 +15,16 @@ final class HealthKitObserver {
   
   private init() { }
   
-  let authorized = BehaviorRelay<Bool>(value: false)
+  private let didAuthorizedRelay = BehaviorRelay<Bool>(value: false)
+}
+
+extension HealthKitObserver {
+  
+  func didAuthorized() {
+    didAuthorizedRelay.accept(true)
+  }
+  
+  var authorized: Observable<Bool> {
+    return didAuthorizedRelay.asObservable()
+  }
 }

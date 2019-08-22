@@ -20,7 +20,7 @@ final class DustAPIService: DustAPIServiceType {
     self.xmlParser = xmlParser
   }
   
-  func observatory() -> Observable<String> {
+  func observatory() -> Single<Result<String, Error>> {
     return .create { observer in
       let task = self.provider.request(.observatory) { result in
         switch result {
@@ -28,20 +28,19 @@ final class DustAPIService: DustAPIServiceType {
           do {
             let decoded = try self.validate(response, to: DustAPIObservatoryResponse.self)
             let observatory = decoded.observatory ?? ""
-            observer.onNext(observatory)
-            observer.onCompleted()
+            observer(.success(.success(observatory)))
           } catch {
-            observer.onError(error)
+            observer(.success(.failure(error)))
           }
         case let .failure(error):
-          observer.onError(error)
+          observer(.success(.failure(error)))
         }
       }
       return Disposables.create { task.cancel() }
     }
   }
   
-  func recentTimeInfo() -> Observable<RecentDustInfo> {
+  func recentTimeInfo() -> Single<Result<RecentDustInfo, Error>> {
     return .create { observer in
       let task = self.provider.request(.recentTimeInfo) { result in
         switch result {
@@ -60,20 +59,19 @@ final class DustAPIService: DustAPIServiceType {
               ),
               updatedTime: DateFormatter.dateTime.date(from: recentResponse.dataTime) ?? Date()
             )
-            observer.onNext(dustInfo)
-            observer.onCompleted()
+            observer(.success(.success(dustInfo)))
           } catch {
-            observer.onError(error)
+            observer(.success(.failure(error)))
           }
         case let .failure(error):
-          observer.onError(error)
+          observer(.success(.failure(error)))
         }
       }
       return Disposables.create { task.cancel() }
     }
   }
   
-  func dayInfo() -> Observable<DustPair<[Hour: Int]>> {
+  func dayInfo() -> Single<Result<DustPair<[Hour: Int]>, Error>> {
     return .create { observer in
       let task = self.provider.request(.dayInfo) { result in
         switch result {
@@ -91,21 +89,21 @@ final class DustAPIService: DustAPIServiceType {
             }
             hourlyFineDustIntake.padIfHourIsNotFilled()
             hourlyUltraFineDustIntake.padIfHourIsNotFilled()
-            observer.onNext(.init(fineDust: hourlyFineDustIntake,
-                                  ultraFineDust: hourlyUltraFineDustIntake))
-            observer.onCompleted()
+            let dustPair = DustPair<[Hour: Int]>(fineDust: hourlyFineDustIntake,
+                                                 ultraFineDust: hourlyUltraFineDustIntake)
+            observer(.success(.success(dustPair)))
           } catch {
-            observer.onError(error)
+            observer(.success(.failure(error)))
           }
         case let .failure(error):
-          observer.onError(error)
+          observer(.success(.failure(error)))
         }
       }
       return Disposables.create { task.cancel() }
     }
   }
   
-  func dayInfo(from startDate: Date, to endDate: Date) -> Observable<DustPair<[Date: [Hour: Int]]>> {
+  func dayInfo(from startDate: Date, to endDate: Date) -> Single<Result<DustPair<[Date: [Hour: Int]]>, Error>> {
     return .create { observer in
       let task = self.provider.request(.daysInfo(startDate: startDate, endDate: endDate)) { result in
         switch result {
@@ -131,13 +129,15 @@ final class DustAPIService: DustAPIServiceType {
                 intake: item.ultraFineDustValue
               )
             }
-            observer.onNext(.init(fineDust: hourlyFineDustIntakePerDate,
-                                  ultraFineDust: hourlyUltraFineDustIntakePerDate))
+            let dustPair
+              = DustPair<[Date: [Hour: Int]]>(fineDust: hourlyFineDustIntakePerDate,
+                                              ultraFineDust: hourlyUltraFineDustIntakePerDate)
+            observer(.success(.success(dustPair)))
           } catch {
-            observer.onError(error)
+            observer(.success(.failure(error)))
           }
         case let .failure(error):
-          observer.onError(error)
+          observer(.success(.failure(error)))
         }
       }
       return Disposables.create { task.cancel() }

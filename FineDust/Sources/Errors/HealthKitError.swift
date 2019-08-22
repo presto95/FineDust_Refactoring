@@ -22,6 +22,8 @@ enum HealthKitError: Error {
   
   /// 권한이 없음.
   case notAuthorized
+  
+  case `default`
 }
 
 extension HealthKitError {
@@ -38,6 +40,8 @@ extension HealthKitError {
       return "쿼리문 실행 오류"
     case .notAuthorized:
       return "건강 앱 접근 권한이 없습니다."
+    case .default:
+      return "알 수 없는 오류"
     }
   }
 }

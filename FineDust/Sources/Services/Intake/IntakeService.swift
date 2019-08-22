@@ -28,16 +28,21 @@ final class IntakeService: IntakeServiceType {
     self.persistenceService = persistenceService
   }
   
-  func todayIntake() -> Observable<DustPair<Int>> {
+  func todayIntake() -> Single<Result<DustPair<Int>, Error>> {
     if !self.healthKitService.isAuthorized {
-      return .error(HealthKitError.notAuthorized)
+      return .just(.failure(HealthKitError.notAuthorized))
     }
-    return Observable.zip(dustAPIService.dayInfo(), healthKitService.todayDistancePerHour()) {
-      self.totalHourlyIntake($0, $1)
+    return Single
+      .zip(dustAPIService.dayInfo(),
+           healthKitService.todayDistancePerHour()) { dayInfo, todayDistancePerHour -> Result<DustPair<Int>, Error> in
+            guard let dayInfo = dayInfo.success,
+              let todayDistancePerHour = todayDistancePerHour.success
+              else { return .failure(NSError(domain: "", code: 0, userInfo: nil)) }
+            return .success(self.totalHourlyIntake(dayInfo, todayDistancePerHour))
     }
   }
   
-  func weekIntake() -> Observable<[DustPair<Int>]> {
+  func weekIntake() -> Single<Result<[DustPair<Int>], Error>> {
     if !self.healthKitService.isAuthorized {
       return .error(HealthKitError.notAuthorized)
     }

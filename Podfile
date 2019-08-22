@@ -9,15 +9,14 @@ target 'FineDust' do
   pod 'RxSwift'
   pod 'RxOptional'
   pod 'RxViewController'
-  pod 'SnapKit'
   pod 'SVProgressHUD'
-  pod 'Then'
   pod 'SWXMLHash'
   pod 'RealmSwift'
   pod 'NotificationBannerSwift'
   pod 'RxDataSources'
   pod 'RxCoreLocation'
   pod 'Moya'
+  pod 'HGCodeBaseUI'
 
   target 'FineDustTests' do
     inherit! :search_paths

@@ -10,7 +10,7 @@ import RxSwift
 
 protocol IntakeServiceType {
   
-  func todayIntake() -> Observable<DustPair<Int>>
+  func todayIntake() -> Single<Result<DustPair<Int>, Error>>
   
-  func weekIntake() -> Observable<[DustPair<Int>]>
+  func weekIntake() -> Single<Result<[DustPair<Int>], Error>>
 }
